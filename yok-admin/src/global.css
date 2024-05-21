@@ -1,0 +1,34 @@
+/* scrollbar */
+@import 'simplebar-react/dist/simplebar.min.css';
+
+p{
+    margin: 0px;
+}
+
+.yok-orders-yok{
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+}
+
+.images-yok{
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.create-product-details-product-name-image-ds{
+    width: 100%;
+}
+
+.payment-input-box{
+    color: currentcolor;
+    border: 1px solid #dbd7d7;
+    border-radius: 6px;
+    background: none;
+    width: 100%;
+    padding: 16px 14px;
+}
+
+.create-product-input-box-two-yokk{
+    width: 100%;
+}

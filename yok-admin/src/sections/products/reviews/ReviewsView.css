@@ -1,0 +1,165 @@
+.table-container {
+  overflow-x: auto;
+}
+
+.review-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.review-table th,
+.review-table td {
+  padding: 1rem;
+  text-align: left;
+}
+
+.review-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+/* .review-table tr:hover {
+    background-color: #f5f5f5;
+  } */
+
+.review-table th {
+  background-color: #000000;
+  color: #eaeaea;
+  font-weight: bold;
+}
+
+.review-table tr:nth-child(even) {
+  background-color: #eaeaea;
+}
+
+.red {
+  color: red;
+}
+
+.green {
+  color: #1ac90a;
+}
+
+.aquablue {
+  color: #007373 !important;
+}
+
+.review-table td button {
+  margin-right: 0.5rem;
+}
+
+.create-review-details-yok {
+  margin-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.create-review-details-and-title-para-yok {
+  width: 35%;
+  padding: 0px 10px 20px 0px;
+}
+
+.create-review-details-review-name-image-yok {
+  width: 65%;
+  padding: 20px;
+  background-color: rgb(255, 255, 255);
+  color: rgb(33, 43, 54);
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  background-image: none;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    rgba(145, 158, 171, 0.2) 0px 0px 2px 0px,
+    rgba(145, 158, 171, 0.12) 0px 12px 24px -4px;
+  border-radius: 16px;
+  z-index: 0;
+}
+
+.create-review-input-box {
+  color: currentcolor;
+  border: 1px solid #dbd7d7;
+  border-radius: 6px;
+  box-sizing: content-box;
+  background: none;
+  width: 96%;
+  padding: 16px 14px;
+}
+
+.create-review-input-box-two-yok {
+  width: 100%;
+}
+
+/* --------------file------------- */
+.Neon {
+  font-family: sans-serif;
+  font-size: 14px;
+  color: #494949;
+  position: relative;
+}
+.Neon * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.Neon-input-inner {
+  margin-top: 15px;
+}
+.Neon-input-dragDrop {
+  display: block;
+  border-radius: 6px;
+  width: 100%;
+  padding: 25px;
+  color: #8d9499;
+  color: #97a1a8;
+  background: #fff;
+  border: 1px solid #dbd7d7;
+  text-align: center;
+  -webkit-transition:
+    box-shadow 0.3s,
+    border-color 0.3s;
+  -moz-transition:
+    box-shadow 0.3s,
+    border-color 0.3s;
+  transition:
+    box-shadow 0.3s,
+    border-color 0.3s;
+}
+.Neon-input-dragDrop .Neon-input-icon {
+  font-size: 48px;
+  margin-top: -10px;
+}
+.Neon-input-text h3 {
+  margin: 0;
+  font-size: 18px;
+}
+.Neon-input-text span {
+  font-size: 12px;
+}
+.Neon-input-choose-btn.blue {
+  border: none;
+}
+.Neon-input-choose-btn {
+  display: inline-block;
+  padding: 8px 14px;
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: bold;
+  color: #8d9496;
+  border-radius: 3px;
+  border: 1px solid #c6c6c6;
+  vertical-align: middle;
+  background-color: #fff;
+}
+
+/* -------------------input file css---------------------- */
+
+.create-review-button-yok {
+  margin-top: 20px;
+  text-align: end;
+}

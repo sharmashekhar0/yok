@@ -1,0 +1,121 @@
+.table-container {
+  overflow-x: auto;
+}
+
+.review-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.review-table th,
+.review-table td {
+  padding: 1rem;
+  text-align: left;
+}
+
+.review-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+/* .review-table tr:hover {
+    background-color: #f5f5f5;
+  } */
+
+.review-table th {
+  background-color: #000000;
+  color: #eaeaea;
+  font-weight: bold;
+}
+
+.review-table tr:nth-child(even) {
+  background-color: #eaeaea;
+}
+
+.red {
+  color: red;
+}
+
+.green {
+  color: #1ac90a;
+}
+
+.aquablue {
+  color: #007373 !important;
+}
+
+.review-table td button {
+  margin-right: 0.5rem;
+}
+
+/* Invoice Container */
+.invoice-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+}
+
+/* Invoice Header */
+.invoice-container h2 {
+  color: #333;
+  text-align: center;
+}
+
+/* Invoice Details Section */
+.invoice-details {
+  margin-bottom: 20px;
+}
+
+/* Invoice Table */
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.invoice-table th,
+.invoice-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+/* Invoice Total Section */
+.invoice-total {
+  text-align: right;
+}
+
+.invoice-total p {
+  font-weight: bold;
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+/* Styling for Alternating Rows */
+.invoice-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Hover Effect on Table Rows */
+.invoice-table tbody tr:hover {
+  background-color: #e0e0e0;
+}
+
+.invoice-section {
+  margin-bottom: 20px;
+}
+
+.invoice-section h3 {
+  color: #333;
+  font-size: 16px;
+}
+
+.invoice-section p {
+  margin: 5px 0;
+  font-size: 14px;
+}

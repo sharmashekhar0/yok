@@ -1,0 +1,22 @@
+.payment-options-yok{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.payment-option-single-yok{
+    background-color: #ffde59;
+    width: 48%;
+    text-align: center;
+    border-radius: 12px;
+}
+
+.payment-option-image-yok{
+    height: 180px;
+}
+
+.payment-option-toggle-btn-yok{
+    position: relative;
+    bottom: 30px;
+}

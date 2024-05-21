@@ -1,0 +1,41 @@
+.submenu-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.submenu-table th,
+.submenu-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.submenu-table th {
+  background-color: #000000;
+  color: #eaeaea;
+  font-weight: bold;
+}
+
+.submenu-table tr:nth-child(even) {
+  background-color: #eaeaea;
+}
+
+/* .submenu-table th {
+  background-color: #f2f2f2;
+} */
+
+.parent-row {
+  background-color: #e0e0e0;
+}
+
+.red {
+  color: red;
+}
+
+.green {
+  color: #1ac90a;
+}
+
+.aquablue {
+  color: #007373 !important;
+}
