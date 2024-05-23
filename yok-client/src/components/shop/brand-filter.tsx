@@ -11,7 +11,9 @@ export const BrandFilter = () => {
 	const { data, isLoading, error } = useBrandsQuery({
 		limit: 10,
 	});
-	const selectedBrands = query?.brand ? (query.brand as string).split(",") : [];
+	const selectedBrands = query?.brand
+		? (query.brand as string).split(",")
+		: [];
 	const [formState, setFormState] = React.useState<string[]>(selectedBrands);
 	React.useEffect(() => {
 		setFormState(selectedBrands);
@@ -53,8 +55,8 @@ export const BrandFilter = () => {
 						key={item.id}
 						label={item.name}
 						name={item.name.toLowerCase()}
-						checked={formState.includes(item.slug)}
-						value={item.slug}
+						checked={formState.includes(item.name)}
+						value={item.name}
 						onChange={handleItemClick}
 					/>
 				))}

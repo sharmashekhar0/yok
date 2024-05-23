@@ -4,14 +4,12 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
-import { createBannerAPI } from 'src/api/api';
 import Swal from 'sweetalert2';
 import { Stack } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { createTestimonialAPI } from '../../api/api';
 
-const NewTestimonial = ({ setActiveButton }) => {
+const NewTestimonial = () => {
   const { register, handleSubmit, watch } = useForm();
 
   const [testimonialData, setTestimonialData] = useState({

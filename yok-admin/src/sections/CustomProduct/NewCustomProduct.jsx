@@ -17,11 +17,10 @@ import {
   TextField,
 } from '@mui/material';
 
-import { createProductAPI, getAllBrands, getAllCategory } from 'src/api/api';
-
 import OutlinedInput from '@mui/material/OutlinedInput';
 import ListItemText from '@mui/material/ListItemText';
 import { useNavigate } from 'react-router-dom';
+import { createCustomProductAPI, getAllBrands, getAllCategory } from 'src/api/api';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -34,13 +33,11 @@ const MenuProps = {
   },
 };
 
-const tagsValue = ['Casual', 'Cotton'];
-
 const variationsValue = ['Small', 'Medium', 'Large', 'Extra Large'];
 
 const colorsValue = ['Red', 'Green', 'Orange'];
 
-const NewProduct = () => {
+const NewCustomProduct = () => {
   const navigate = useNavigate();
   const [tags, setTags] = React.useState([]);
   const [color, setColor] = React.useState([]);
@@ -371,7 +368,7 @@ const NewProduct = () => {
 
       console.log('Selected Categories :: ', selectedCategories);
 
-      const response = await createProductAPI(formData);
+      const response = await createCustomProductAPI(formData);
       console.log('Product created successfully:', response);
       // if (response) {
       //   navigate('/products');
@@ -523,7 +520,7 @@ const NewProduct = () => {
                 }}
                 accept="image/*"
                 id="image-upload"
-                multiple="false"
+                multiple={false}
                 name="image"
                 type="file"
                 onChange={handleInputChange}
@@ -803,4 +800,4 @@ const NewProduct = () => {
   );
 };
 
-export default NewProduct;
+export default NewCustomProduct;

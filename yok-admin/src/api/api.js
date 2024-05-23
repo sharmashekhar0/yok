@@ -9,7 +9,20 @@ export const createProductAPI = async (productData) => {
         'Content-Type': 'multipart/form-data',
       },
     });
+    return response.data;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw error;
+  }
+};
 
+export const createCustomProductAPI = async (productData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/custom-product/create`, productData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   } catch (error) {
     console.error('Error creating product:', error);
@@ -98,6 +111,21 @@ export const getAllTestimonials = async () => {
   }
 };
 
+export const getAllBrands = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/brand/get`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw error;
+  }
+};
+
 export const deleteBanner = async (id) => {
   try {
     const response = await axios.post(
@@ -134,6 +162,41 @@ export const deleteTestimonial = async (testimonialId) => {
     return response.data;
   } catch (error) {
     console.error('Error deleting testimonial:', error);
+    throw error;
+  }
+};
+
+export const deleteBrand = async (brandId) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/brand/delete`,
+      { brandId },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    console.log(response.data);
+
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting brand:', error);
+    throw error;
+  }
+};
+
+export const createBrand = async (data) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/brand/create`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error creating product:', error);
     throw error;
   }
 };
@@ -396,6 +459,23 @@ export const getProducts = async () => {
   }
 };
 
+export const getCustomProducts = async () => {
+  try {
+    const url = `${BASE_URL}/custom-product/get`;
+
+    const response = await axios.get(url, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error fetching submenus:', error);
+    throw error;
+  }
+};
+
 export const editProductAPI = async (productData) => {
   try {
     const response = await axios.post(`${BASE_URL}/product/edit`, productData, {
@@ -414,6 +494,21 @@ export const editProductAPI = async (productData) => {
 export const deleteProductAPI = async (productData) => {
   try {
     const response = await axios.post(`${BASE_URL}/product/delete`, productData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw error;
+  }
+};
+
+export const deleteCustomProductAPI = async (productData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/custom-product/delete`, productData, {
       headers: {
         'Content-Type': 'application/json',
       },

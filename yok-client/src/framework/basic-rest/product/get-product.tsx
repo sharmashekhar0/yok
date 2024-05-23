@@ -10,6 +10,6 @@ export const fetchProduct = async (_slug: string) => {
 export const useProductQuery = (slug: string) => {
 	return useQuery<Product, Error>({
 		queryKey: [API_ENDPOINTS.PRODUCT, slug],
-		queryFn: () => fetchProduct(slug)
+		queryFn: () => fetchProduct(slug),
 	});
 };

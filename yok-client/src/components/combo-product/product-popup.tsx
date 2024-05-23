@@ -51,73 +51,54 @@ export default function ProductPopup() {
 		  )
 		: true;
 
-	function addToCart() {
+	async function addToCart() {
 		if (!isSelected) return;
 		if (!userData) {
 			setModalView("LOGIN_VIEW");
 			return openModal();
 		}
+
 		// to show btn feedback while product carting
 		setAddToCartLoader(true);
-		setTimeout(() => {
-			setAddToCartLoader(false);
-			setViewCartBtn(true);
-		}, 600);
+
 		const item = generateCartItem(data!, attributes);
-		addItemToCart(item, quantity);
 
-		console.log(item, "item");
-		console.log(attributes, "attributes");
-
-		console.log(item.attributes, "item");
-		console.log(item.attributes.color, "item");
-		console.log(item.attributes.size, "item");
-
-		// {
-		//     "id": "6.M.Orange",
-		//     "name": "Armani Wide-Leg Trousers",
-		//     "slug": "armani-wide-leg-trousers",
-		//     "image": "/assets/images/products/p-16.png",
-		//     "price": 60,
-		//     "attributes": {
-		//         "size": "M",
-		//         "color": "Orange"
-		//     },
-		//     "quantity": 1,
-		//     "itemTotal": 60
-		// }
-		fetch("api/add-to-cart/create", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				userId: userData?._id,
-				slug: data._id,
-				productId: data?._id,
-				name: item.name,
-				image: item.image,
-				price: item.price,
-				quantity,
-				attributes: {
-					size: item?.attributes?.size,
-					color: item?.attributes?.color,
+		try {
+			const response = await fetch("api/add-to-cart/create", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
 				},
-				itemTotal: quantity * item.price,
-			}),
-		})
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error("Failed to add item to cart");
-				}
-				// setAddToCartLoader(false);
-				// setViewCartBtn(true);
-			})
-			.catch((error) => {
-				console.error("Error adding item to cart:", error);
+				body: JSON.stringify({
+					userId: userData?._id,
+					slug: data._id,
+					productId: data?._id,
+					name: item.name,
+					image: item.image,
+					price: item.price,
+					quantity,
+					attributes: {
+						size: item?.attributes?.size,
+						color: item?.attributes?.color,
+					},
+					itemTotal: quantity * item.price,
+				}),
 			});
 
-		console.log(item, "item");
+			if (!response.ok) {
+				throw new Error("Failed to add item to cart");
+			}
+			const res = await response.json();
+			console.log("Response Item :: ", res.cartItem);
+			console.log("Add To Cart");
+
+			addItemToCart(res.cartItem, quantity);
+			setViewCartBtn(true);
+		} catch (error) {
+			console.error("Error adding item to cart:", error);
+		} finally {
+			setAddToCartLoader(false);
+		}
 	}
 
 	function navigateToProductPage() {

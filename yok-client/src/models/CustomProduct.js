@@ -3,19 +3,60 @@ const mongoose = require("mongoose");
 let CustomProduct;
 
 try {
-	// delete mongoose.connection.models['CustomProduct'];
 	CustomProduct = mongoose.model("CustomProduct");
 } catch (error) {
 	const CustomProductSchema = new mongoose.Schema(
 		{
-			userId: { type: mongoose.Schema.Types.ObjectId, required: true },
-			name: { type: String },
-			imageUrl: { type: String },
-			color: { type: String },
-			side: { type: String },
-			customizationType: { type: String },
-			customizePolos: { type: String },
-			customizeBasics: { type: String },
+			id: { type: Number },
+			name: { type: String, required: true },
+			sku: { type: String, default: "N/A" },
+			description: { type: String, required: true },
+			category: [{ type: String, required: true }],
+			slug: { type: String },
+			brand: { type: String, required: true },
+			type: { type: String },
+			isNewArrival: { type: Boolean, default: false },
+			customizable: { type: Boolean, default: false },
+			tags: [
+				{
+					id: { type: Number },
+					name: { type: String },
+					slug: { type: String },
+				},
+			],
+			image: {
+				id: { type: Number },
+				thumbnail: { type: String },
+				original: { type: String },
+			},
+			gallery: [
+				{
+					id: { type: Number },
+					thumbnail: { type: String },
+					original: { type: String },
+				},
+			],
+			price: { type: Number, required: true },
+			sale_price: { type: Number },
+			quantity: { type: Number },
+			variations: [
+				{
+					id: { type: Number },
+					value: { type: mongoose.Schema.Types.Mixed },
+					attribute: {
+						id: { type: Number },
+						name: { type: String },
+						slug: { type: String },
+					},
+				},
+			],
+			meta: [
+				{
+					id: { type: Number },
+					title: { type: String },
+					content: { type: String },
+				},
+			],
 		},
 		{ timestamps: true }
 	);

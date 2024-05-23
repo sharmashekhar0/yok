@@ -23,6 +23,8 @@ export const IndexPage = lazy(() => import('src/pages/app'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/user'));
 export const TestimonialPage = lazy(() => import('src/pages/Testimonial'));
+export const CustomProductPage = lazy(() => import('src/pages/CustomProduct'));
+export const BrandPage = lazy(() => import('src/pages/Brand'));
 export const OrderPage = lazy(() => import('src/pages/order'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
@@ -75,6 +77,7 @@ export default function Router() {
               { path: 'products', element: <ProductsPage /> },
               { path: 'b2b', element: <B2B /> },
               { path: 'Banner', element: <BannerPage /> },
+              { path: 'Brand', element: <BrandPage /> },
               { path: 'blog', element: <BlogPage /> },
               { path: 'order', element: <OrderPage /> },
               { path: 'review', element: <Reviewpage /> },
@@ -85,6 +88,7 @@ export default function Router() {
               { path: 'shipping', element: <ShippingView /> },
               { path: 'transaction', element: <TransectionView /> },
               { path: 'testimonial', element: <TestimonialPage /> },
+              { path: 'custom-product', element: <CustomProductPage /> },
               { path: 'payment-setting', element: <PaymentSetting /> },
               // { path: "invoice", element: <InvoiceView /> },
               { path: 'rating-approval', element: <RatingApprovalView /> },

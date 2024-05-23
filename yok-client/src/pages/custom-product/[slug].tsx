@@ -282,6 +282,7 @@ export default function ProductPage() {
 
 		reader.onload = (event) => {
 			setUploadedImageUrl(event.target.result);
+			setNameHolder(""); // Clear name input when image is uploaded
 		};
 
 		reader.readAsDataURL(uploadedImage);
@@ -319,7 +320,7 @@ export default function ProductPage() {
 			formData.append("customizePolos", customizePolos);
 			formData.append("customizeBasics", customizeBasics);
 			const response = await axios.post(
-				"/api/product/custom/create",
+				"/api/custom-product-request/create",
 				formData
 			);
 			// Assuming your API returns the created custom product in the response
@@ -329,67 +330,66 @@ export default function ProductPage() {
 		}
 	};
 
-	function addToCart() {
+	async function addToCart() {
 		if (!isSelected) return;
-		// to show btn feedback while product carting
+
 		if (!userData) {
 			setModalView("LOGIN_VIEW");
 			return openModal();
 		}
+
 		setAddToCartLoader(true);
-		setTimeout(() => {
-			setAddToCartLoader(false);
-		}, 600);
 
 		const item = generateCartItem(data!, attributes);
-		addItemToCart(item, quantity);
-		toast("Added to the bag", {
-			progressClassName: "fancy-progress-bar",
-			position: width > 768 ? "bottom-right" : "top-right",
-			autoClose: 2000,
-			hideProgressBar: false,
-			closeOnClick: true,
-			pauseOnHover: true,
-			draggable: true,
-		});
 
-		console.log("item", item);
-		console.log("quantity", quantity);
-
-		fetch(
-			`${process.env.NEXT_PUBLIC_REST_API_ENDPOINT}/add-to-cart/create`,
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					userId: userData?._id,
-					slug: slug,
-					productId: data?._id,
-					name: item?.name,
-					image: item?.image,
-					price: item?.price,
-					quantity,
-					attributes: {
-						size: item?.attributes?.size,
-						color: item?.attributes?.color,
+		try {
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_REST_API_ENDPOINT}/add-to-cart/create`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
 					},
-					itemTotal: quantity * item.price,
-				}),
-			}
-		)
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error("Failed to add item to cart");
+					body: JSON.stringify({
+						userId: userData?._id,
+						slug: slug,
+						productId: data?._id,
+						name: item?.name,
+						image: item?.image,
+						price: item?.price,
+						quantity,
+						attributes: {
+							size: item?.attributes?.size,
+							color: item?.attributes?.color,
+						},
+						itemTotal: quantity * item.price,
+					}),
 				}
-			})
-			.catch((error) => {
-				console.error("Error adding item to cart:", error);
+			);
+
+			if (!response.ok) {
+				throw new Error("Failed to add item to cart");
+			}
+			const res = await response.json();
+			addItemToCart(res.cartItem, quantity);
+			toast("Added to the bag", {
+				progressClassName: "fancy-progress-bar",
+				position: width > 768 ? "bottom-right" : "top-right",
+				autoClose: 2000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
 			});
 
-		console.log(item, "item");
-		createCustomProductHandler();
+			console.log("item", item);
+			console.log("quantity", quantity);
+			createCustomProductHandler();
+		} catch (error) {
+			console.error("Error adding item to cart:", error);
+		} finally {
+			setAddToCartLoader(false);
+		}
 	}
 
 	function handleAttribute(attribute: any) {
@@ -764,11 +764,14 @@ export default function ProductPage() {
 														type="text"
 														id="name"
 														value={nameHolder}
-														onChange={(e) =>
+														onChange={(e) => {
+															setUploadedImageUrl(
+																""
+															);
 															setNameHolder(
 																e.target.value
-															)
-														}
+															);
+														}}
 													/>
 												</div>
 												<div>

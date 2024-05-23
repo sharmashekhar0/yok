@@ -53,9 +53,19 @@ const navConfig = [
     icon: <FilterBAndWTwoToneIcon />,
   },
   {
+    title: 'Brand',
+    path: '/brand',
+    icon: <FilterBAndWTwoToneIcon />,
+  },
+  {
     title: 'Category',
     path: '/category',
     icon: <CategoryTwoToneIcon />,
+  },
+  {
+    title: 'Custom Product',
+    path: '/custom-product',
+    icon: icon('ic_cart'),
   },
   {
     title: 'Sub Category Menu',

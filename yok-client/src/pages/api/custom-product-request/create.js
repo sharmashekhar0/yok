@@ -1,7 +1,7 @@
 import AWS from "aws-sdk";
 import multer from "multer";
-import CustomProduct from "../../../../models/CustomProduct";
-import s3 from "../../../../lib/aws-config";
+import CustomProductRequest from "../../../models/CustomProductRequest";
+import s3 from "../../../lib/aws-config";
 
 // Configure multer to handle file uploads
 const upload = multer();
@@ -94,7 +94,7 @@ export default async function handler(req, res) {
 					}
 
 					// Create a new CustomProduct document
-					const customProduct = new CustomProduct({
+					const customProduct = new CustomProductRequest({
 						userId,
 						name: name ? name : null,
 						imageUrl: imageUrlToSave,

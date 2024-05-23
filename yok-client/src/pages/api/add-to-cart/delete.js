@@ -1,5 +1,6 @@
 import Cart from "../../../models/Cart";
 import connectToDatabase from "../../../lib/mongodb";
+const { ObjectId } = require("mongodb");
 import jwt from "jsonwebtoken";
 import User from "../../../models/User";
 import Product from "../../../models/Products";
@@ -12,7 +13,8 @@ export default async function handler(req, res) {
 			const { id } = req.body; // Assuming the ID of the item to reduce quantity is sent in the request body
 			console.log("Id From Delete function :: ", id);
 			// Find the cart item by ID
-			const cartItem = await Cart.findById(id);
+			const objectId = new ObjectId(id);
+			const cartItem = await Cart.findById(objectId);
 			console.log("Cart Item :: ", cartItem);
 			if (!cartItem) {
 				return res.status(404).json({ error: "Cart item not found" });

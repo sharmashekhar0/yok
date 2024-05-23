@@ -1,6 +1,6 @@
 import AWS from "aws-sdk";
 import multer from "multer";
-import Product from "../../../models/Products";
+import CustomProduct from "../../../models/CustomProduct";
 import s3 from "../../../lib/aws-config";
 
 // Configure multer to handle file uploads
@@ -15,7 +15,6 @@ export const config = {
 export default async function handler(req, res) {
 	if (req.method === "POST") {
 		try {
-			// Use multer middleware to handle file uploads
 			upload.fields([
 				{ name: "image", maxCount: 1 },
 				{ name: "gallery", maxCount: 10 },
@@ -115,7 +114,7 @@ export default async function handler(req, res) {
 
 				console.log("Category :: ", typeof category);
 				// Create a new Product document
-				const product = new Product({
+				const product = new CustomProduct({
 					name,
 					description,
 					sku,
@@ -153,13 +152,12 @@ export default async function handler(req, res) {
 
 				console.log(product);
 
-				// Save the product to the database
 				await product.save();
 
 				// Send response with image URLs
 				res.status(200).json({
 					success: true,
-					message: "Product Created Successfully.",
+					message: "Custom Product Created Successfully.",
 					product,
 				});
 			});

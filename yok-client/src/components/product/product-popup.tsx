@@ -55,57 +55,54 @@ export default function ProductPopup() {
 		  )
 		: true;
 
-	function addToCart() {
+	async function addToCart() {
 		if (!isSelected) return;
 		if (!userData) {
 			setModalView("LOGIN_VIEW");
 			return openModal();
 		}
+
+		// to show btn feedback while product carting
 		setAddToCartLoader(true);
-		setTimeout(() => {
-			setAddToCartLoader(false);
-			setViewCartBtn(true);
-		}, 600);
+
+		console.log("Add To Cart");
+
 		const item = generateCartItem(data!, attributes);
-		console.log("Item Product Popup :: ", item);
-		addItemToCart(item, quantity);
-		console.log("Item", item);
-		console.log(attributes, "attributes");
-
-		console.log(item.attributes, "item");
-		console.log(item.attributes.color, "item");
-		console.log(item.attributes.size, "item");
-
-		fetch("api/add-to-cart/create", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				userId: userData?._id,
-				slug: data._id,
-				productId: data?._id,
-				name: item.name,
-				image: item.image,
-				price: item.price,
-				quantity,
-				attributes: {
-					size: item?.attributes?.size,
-					color: item?.attributes?.color,
+		try {
+			const response = await fetch("api/add-to-cart/create", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
 				},
-				itemTotal: quantity * item.price,
-			}),
-		})
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error("Failed to add item to cart");
-				}
-				// setAddToCartLoader(false);
-				// setViewCartBtn(true);
-			})
-			.catch((error) => {
-				console.error("Error adding item to cart:", error);
+				body: JSON.stringify({
+					userId: userData?._id,
+					slug: data._id,
+					productId: data?._id,
+					name: item.name,
+					image: item.image,
+					price: item.price,
+					quantity,
+					attributes: {
+						size: item?.attributes?.size,
+						color: item?.attributes?.color,
+					},
+					itemTotal: quantity * item.price,
+				}),
 			});
+
+			if (!response.ok) {
+				throw new Error("Failed to add item to cart");
+			}
+			const res = await response.json();
+			console.log("Response Item :: ", res.cartItem);
+
+			addItemToCart(res.cartItem, quantity);
+			setViewCartBtn(true);
+		} catch (error) {
+			console.error("Error adding item to cart:", error);
+		} finally {
+			setAddToCartLoader(false);
+		}
 	}
 
 	function navigateToProductPage() {

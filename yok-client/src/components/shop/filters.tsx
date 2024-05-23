@@ -1,7 +1,7 @@
 import { CategoryFilter } from "./category-filter";
 import { BrandFilter } from "./brand-filter";
 import { FilteredItem } from "./filtered-item";
-import { ColorFilter } from "./color-filter";
+// import { ColorFilter } from "./color-filter";
 import { PriceFilter } from "./price-filter";
 import { useRouter } from "next/router";
 import isEmpty from "lodash/isEmpty";
@@ -36,7 +36,9 @@ export const ShopFilters: React.FC = () => {
 							.map((v, idx) => (
 								<FilteredItem
 									itemKey={
-										Object.keys(query).find((k) => query[k]?.includes(v))!
+										Object.keys(query).find((k) =>
+											query[k]?.includes(v)
+										)!
 									}
 									itemValue={v}
 									key={idx}
@@ -48,7 +50,7 @@ export const ShopFilters: React.FC = () => {
 			<CategoryFilter />
 			<BrandFilter />
 			<PriceFilter />
-			<ColorFilter />
+			{/* <ColorFilter /> */}
 		</div>
 	);
 };

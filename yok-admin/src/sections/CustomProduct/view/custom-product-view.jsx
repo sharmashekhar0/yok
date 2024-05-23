@@ -1,6 +1,5 @@
 /* eslint-disable */
-import React, { useEffect, useState } from 'react';
-// import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -10,10 +9,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import Pagination from '@mui/material/Pagination';
+import NewCustomProduct from '../NewCustomProduct';
 
 import Iconify from 'src/components/iconify';
 
-import './ProductsView.css';
 import {
   Box,
   Checkbox,
@@ -27,25 +26,22 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import NewProduct from '../NewProduct';
-import { getProducts, deleteProductAPI } from 'src/api/api';
-import ViewProduct from './ViewProduct';
-import EditProduct from './EditProduct';
 
-export default function ProductsView() {
-  const [activeButton, setActiveButton] = useState('product');
+import './customProductView.css';
+import { deleteCustomProductAPI, getCustomProducts } from 'src/api/api';
+
+export default function CustomProductPage() {
+  const [activeButton, setActiveButton] = useState('custom');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const handleNewProductButtonClick = () => {
-    console.log('cli');
-    setActiveButton('newProduct');
-    // navigate('/product/add-product')
+  const handleNewCustomProductButtonClick = () => {
+    setActiveButton('newCustomProduct');
   };
 
-  const [products, setProducts] = useState(null);
+  const [customProducts, setCustomProducts] = useState(null);
   const [clickedProduct, setClickedProduct] = useState(null);
   useEffect(() => {
     loadProducts();
@@ -53,15 +49,15 @@ export default function ProductsView() {
 
   const loadProducts = async () => {
     try {
-      const response = await getProducts();
-      setProducts(response?.data);
-      console.log('response products', response);
+      const response = await getCustomProducts();
+      setCustomProducts(response?.data);
+      console.log('response custom products', response);
     } catch (error) {
       console.log('error', error);
     }
   };
 
-  const dummyProducts = products;
+  const dummyProducts = customProducts;
 
   const handleView = (product) => {
     setClickedProduct(product);
@@ -77,9 +73,9 @@ export default function ProductsView() {
   const handleDelete = async (product) => {
     console.log('dlete', product._id);
     try {
-      const response = await deleteProductAPI({ productId: product._id });
+      const response = await deleteCustomProductAPI({ productId: product._id });
       console.log('response delete', response);
-      setProducts(products.filter((pro) => pro._id !== product._id));
+      setCustomProducts(customProducts.filter((pro) => pro._id !== product._id));
     } catch (error) {
       console.log('error on delete ptoduct ', error);
     }
@@ -128,13 +124,13 @@ export default function ProductsView() {
 
   return (
     <Container>
-      {activeButton === 'product' && (
+      {activeButton === 'custom' && (
         <div>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-            <Typography variant="h4">Products</Typography>
+            <Typography variant="h4">Custom Products</Typography>
 
             <Button
-              onClick={handleNewProductButtonClick}
+              onClick={handleNewCustomProductButtonClick}
               variant="contained"
               color="inherit"
               startIcon={<Iconify icon="eva:plus-fill" />}
@@ -253,9 +249,9 @@ export default function ProductsView() {
           </div>
         </div>
       )}
-      {activeButton === 'newProduct' && <NewProduct />}
-      {activeButton === 'viewProduct' && <ViewProduct clickedProduct={clickedProduct} />}
-      {activeButton === 'EditProduct' && <EditProduct clickedProduct={clickedProduct} />}
+      {activeButton === 'newCustomProduct' && <NewCustomProduct />}
+      {/* {activeButton === 'viewProduct' && <ViewProduct clickedProduct={clickedProduct} />}
+      {activeButton === 'EditProduct' && <EditProduct clickedProduct={clickedProduct} />} */}
     </Container>
   );
 }
