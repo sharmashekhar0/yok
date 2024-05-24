@@ -244,6 +244,7 @@ export default function ProductPage() {
 	const [customizeBasics, setCustomizeBasics] = useState<string>("");
 	const [checkedBox, setCheckedBox] = useState("null");
 	const [selectedColor, setSelectedColor] = useState("");
+	const [image, setImage] = useState(null);
 	const [isOptionSelected, setIsOptionSelected] = useState(false);
 
 	const [uploadedImageUrl, setUploadedImageUrl] = useState("");
@@ -278,6 +279,7 @@ export default function ProductPage() {
 	const handleImageUpload = (files) => {
 		// console.log("Image selected:", files);
 		const uploadedImage = files[0];
+		setImage(uploadedImage);
 		const reader = new FileReader();
 
 		reader.onload = (event) => {
@@ -312,7 +314,7 @@ export default function ProductPage() {
 		try {
 			const formData = new FormData();
 			formData.append("name", nameHolder);
-			formData.append("image", uploadedImageUrl);
+			formData.append("image", image);
 			formData.append("userId", userData?._id);
 			formData.append("color", selectedColor);
 			formData.append("side", checkedBox);

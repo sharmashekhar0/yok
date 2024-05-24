@@ -24,6 +24,7 @@ export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/user'));
 export const TestimonialPage = lazy(() => import('src/pages/Testimonial'));
 export const CustomProductPage = lazy(() => import('src/pages/CustomProduct'));
+export const CustomProductRequestsPage = lazy(() => import('src/pages/CustomProductRequests'));
 export const BrandPage = lazy(() => import('src/pages/Brand'));
 export const OrderPage = lazy(() => import('src/pages/order'));
 export const LoginPage = lazy(() => import('src/pages/login'));
@@ -89,6 +90,7 @@ export default function Router() {
               { path: 'transaction', element: <TransectionView /> },
               { path: 'testimonial', element: <TestimonialPage /> },
               { path: 'custom-product', element: <CustomProductPage /> },
+              // { path: 'custom-product-requests', element: <CustomProductRequestsPage /> },
               { path: 'payment-setting', element: <PaymentSetting /> },
               // { path: "invoice", element: <InvoiceView /> },
               { path: 'rating-approval', element: <RatingApprovalView /> },

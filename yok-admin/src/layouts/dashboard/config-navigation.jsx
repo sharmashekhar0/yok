@@ -68,6 +68,11 @@ const navConfig = [
     icon: icon('ic_cart'),
   },
   {
+    title: 'Custom Product Requests',
+    path: '/custom-product-requests',
+    icon: icon('ic_cart'),
+  },
+  {
     title: 'Sub Category Menu',
     path: '/sub-menu',
     icon: <CategoryTwoToneIcon />,
@@ -137,11 +142,11 @@ const navConfig = [
     path: '/faq',
     icon: <LiveHelpTwoToneIcon />,
   },
-  // {
-  //   title: 'Rating Approval',
-  //   path: '/rating-approval',
-  //   icon: <ThumbUpTwoToneIcon />,
-  // },
+  {
+    title: 'Rating Approval',
+    path: '/rating-approval',
+    icon: <ThumbUpTwoToneIcon />,
+  },
   {
     title: 'Terms and Conditions',
     path: '/terms-and-conditions',

@@ -9,8 +9,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import Pagination from '@mui/material/Pagination';
-import NewCustomProduct from '../NewCustomProduct';
-import ViewCustomProduct from '../view/ViewCustomProduct';
+// import NewCustomProduct from '../NewCustomProduct';
+// import ViewCustomProduct from '../view/ViewCustomProduct';
+import ViewCustomProductRequest from '../view/ViewCustomProductRequest';
 
 import Iconify from 'src/components/iconify';
 
@@ -28,12 +29,11 @@ import {
   TextField,
 } from '@mui/material';
 
-import './customProductView.css';
-import { deleteCustomProductAPI, getCustomProducts } from 'src/api/api';
-import EditCustomProduct from './EditCustomProduct';
+import './customProductRequestsView.css';
+import { getCustomProductRequests, deleteCustomProductRequestAPI } from 'src/api/api';
 
-export default function CustomProductPage() {
-  const [activeButton, setActiveButton] = useState('custom');
+export default function CustomProductRequestsPage() {
+  const [activeButton, setActiveButton] = useState('customProductRequests');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,7 +43,7 @@ export default function CustomProductPage() {
     setActiveButton('newCustomProduct');
   };
 
-  const [customProducts, setCustomProducts] = useState(null);
+  const [customProductRequests, setCustomProductRequests] = useState(null);
   const [clickedProduct, setClickedProduct] = useState(null);
   useEffect(() => {
     loadProducts();
@@ -51,19 +51,19 @@ export default function CustomProductPage() {
 
   const loadProducts = async () => {
     try {
-      const response = await getCustomProducts();
-      setCustomProducts(response?.data);
-      console.log('response custom products', response);
+      const response = await getCustomProductRequests();
+      console.log('Custom Product Requests :: ', response?.data);
+      setCustomProductRequests(response?.data);
     } catch (error) {
       console.log('error', error);
     }
   };
 
-  const dummyProducts = customProducts;
+  const dummyProducts = customProductRequests;
 
   const handleView = (product) => {
     setClickedProduct(product);
-    setActiveButton('ViewCustomProduct');
+    setActiveButton('ViewCustomProductRequest');
   };
 
   const handleEdit = (product) => {
@@ -73,13 +73,13 @@ export default function CustomProductPage() {
   };
 
   const handleDelete = async (product) => {
-    console.log('dlete', product._id);
+    console.log('delete', product._id);
     try {
-      const response = await deleteCustomProductAPI({ productId: product._id });
+      const response = await deleteCustomProductRequestAPI({ productId: product._id });
       console.log('response delete', response);
-      setCustomProducts(customProducts.filter((pro) => pro._id !== product._id));
+      setCustomProductRequests(customProductRequests.filter((pro) => pro._id !== product._id));
     } catch (error) {
-      console.log('error on delete ptoduct ', error);
+      console.log('error on delete product :: ', error);
     }
   };
 
@@ -122,23 +122,15 @@ export default function CustomProductPage() {
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
+    console.log('Custom Product Requests :: ', customProductRequests);
   };
 
   return (
     <Container>
-      {activeButton === 'custom' && (
+      {activeButton === 'customProductRequests' && (
         <div>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-            <Typography variant="h4">Custom Products</Typography>
-
-            <Button
-              onClick={handleNewCustomProductButtonClick}
-              variant="contained"
-              color="inherit"
-              startIcon={<Iconify icon="eva:plus-fill" />}
-            >
-              New Product
-            </Button>
+            <Typography variant="h4">Custom Product Requests</Typography>
           </Stack>
           <Stack
             direction="row"
@@ -169,29 +161,6 @@ export default function CustomProductPage() {
                 // }}
               />
             </Box>
-
-            {/* Sort By Dropdown */}
-            <FormControl variant="outlined" sx={{ width: '50%', minWidth: 120 }}>
-              <InputLabel id="sort-by-label">Sort By</InputLabel>
-              <Select
-                labelId="sort-by-label"
-                id="sort-by"
-                label="Sort By"
-                value={sortOption}
-                onChange={handleSort}
-              >
-                {/* Dummy Options */}
-                <MenuItem value="" disabled>
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value="RatingHighToLow">Rating (High &gt; Low)</MenuItem>
-                <MenuItem value="RatingLowToHigh">Rating (Low &gt; High)</MenuItem>
-                <MenuItem value="NumOfSaleHighToLow">Num of Sale (High &gt; Low)</MenuItem>
-                <MenuItem value="NumOfSaleLowToHigh">Num of Sale (Low &gt; High)</MenuItem>
-                <MenuItem value="BasePriceHighToLow">Base Price (High &gt; Low)</MenuItem>
-                <MenuItem value="BasePriceLowToHigh">Base Price (Low &gt; High)</MenuItem>
-              </Select>
-            </FormControl>
           </Stack>
 
           <div className="table-container">
@@ -218,9 +187,6 @@ export default function CustomProductPage() {
                       <td>
                         <IconButton onClick={() => handleView(product)} title="View">
                           <VisibilityIcon className="aquablue" />
-                        </IconButton>
-                        <IconButton onClick={() => handleEdit(product)} title="Edit">
-                          <EditIcon className="green" />
                         </IconButton>
                         <IconButton onClick={() => handleDelete(product)} title="Delete">
                           <DeleteIcon className="red" />
@@ -251,12 +217,8 @@ export default function CustomProductPage() {
           </div>
         </div>
       )}
-      {activeButton === 'newCustomProduct' && <NewCustomProduct />}
-      {activeButton === 'ViewCustomProduct' && (
-        <ViewCustomProduct clickedProduct={clickedProduct} />
-      )}
-      {activeButton === 'EditCustomProduct' && (
-        <EditCustomProduct clickedProduct={clickedProduct} />
+      {activeButton === 'ViewCustomProductRequest' && (
+        <ViewCustomProductRequest clickedProduct={clickedProduct} />
       )}
     </Container>
   );

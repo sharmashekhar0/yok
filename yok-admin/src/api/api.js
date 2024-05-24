@@ -459,6 +459,23 @@ export const getProducts = async () => {
   }
 };
 
+export const getCustomProductRequests = async () => {
+  try {
+    const url = `${BASE_URL}/custom-product-request/get`;
+
+    const response = await axios.get(url, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error fetching custom product requests :', error);
+    throw error;
+  }
+};
+
 export const getCustomProducts = async () => {
   try {
     const url = `${BASE_URL}/custom-product/get`;
@@ -491,6 +508,21 @@ export const editProductAPI = async (productData) => {
   }
 };
 
+export const editCustomProductAPI = async (productData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/custom-product/edit`, productData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw error;
+  }
+};
+
 export const deleteProductAPI = async (productData) => {
   try {
     const response = await axios.post(`${BASE_URL}/product/delete`, productData, {
@@ -502,6 +534,21 @@ export const deleteProductAPI = async (productData) => {
     return response.data;
   } catch (error) {
     console.error('Error creating product:', error);
+    throw error;
+  }
+};
+
+export const deleteCustomProductRequestAPI = async (productData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/custom-product-request/delete`, productData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting custom product request :', error);
     throw error;
   }
 };

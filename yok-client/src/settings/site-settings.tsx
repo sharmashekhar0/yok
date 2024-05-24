@@ -27,8 +27,8 @@ export const siteSettings = {
 	name: "YOK",
 	description: "YOK",
 	author: {
-		name: "REDQ",
-		websiteUrl: "https://redq.io",
+		name: "Yok",
+		websiteUrl: "https://yok.co.in/",
 		address: "",
 	},
 	logo: {

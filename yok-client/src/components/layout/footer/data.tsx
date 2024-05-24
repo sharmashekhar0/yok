@@ -6,12 +6,12 @@ export const footer = {
 			id: 1,
 			widgetTitle: "widget-title-social",
 			lists: [
-				{
-					id: 1,
-					title: "link-instagram",
-					path: "https://www.instagram.com/yok.co.in?utm_source=qr&igsh=MWpjejhwNW1lbXYwcw==",
-					icon: <IoLogoInstagram />,
-				},
+				// {
+				// 	id: 1,
+				// 	title: "link-instagram",
+				// 	path: "https://www.instagram.com/yok.co.in?utm_source=qr&igsh=MWpjejhwNW1lbXYwcw==",
+				// 	icon: <IoLogoInstagram />,
+				// },
 				// {
 				// 	id: 2,
 				// 	title: "link-twitter",
@@ -233,38 +233,38 @@ export const footerContemporary = {
 				// },
 			],
 		},
+		// {
+		// 	id: 1,
+		// 	widgetTitle: "widget-title-social",
+		// 	lists: [
+		// 		{
+		// 			id: 1,
+		// 			title: "link-instagram",
+		// 			path: "https://www.instagram.com/yok.co.in?utm_source=qr&igsh=MWpjejhwNW1lbXYwcw==",
+		// 			icon: <IoLogoInstagram />,
+		// 		},
+		// 		// {
+		// 		// 	id: 2,
+		// 		// 	title: "link-twitter",
+		// 		// 	path: "https://twitter.com/redqinc",
+		// 		// 	icon: <IoLogoTwitter />,
+		// 		// },
+		// 		{
+		// 			id: 2,
+		// 			title: "link-facebook",
+		// 			path: "https://www.facebook.com/Yok.co.in?mibextid=JRoKGi",
+		// 			icon: <IoLogoFacebook />,
+		// 		},
+		// 		// {
+		// 		// 	id: 4,
+		// 		// 	title: "link-youtube",
+		// 		// 	path: "https://www.youtube.com/channel/UCjld1tyVHRNy_pe3ROLiLhw",
+		// 		// 	icon: <IoLogoYoutube />,
+		// 		// },
+		// 	],
+		// },
 		{
 			id: 1,
-			widgetTitle: "widget-title-social",
-			lists: [
-				{
-					id: 1,
-					title: "link-instagram",
-					path: "https://www.instagram.com/yok.co.in?utm_source=qr&igsh=MWpjejhwNW1lbXYwcw==",
-					icon: <IoLogoInstagram />,
-				},
-				// {
-				// 	id: 2,
-				// 	title: "link-twitter",
-				// 	path: "https://twitter.com/redqinc",
-				// 	icon: <IoLogoTwitter />,
-				// },
-				{
-					id: 2,
-					title: "link-facebook",
-					path: "https://www.facebook.com/Yok.co.in?mibextid=JRoKGi",
-					icon: <IoLogoFacebook />,
-				},
-				// {
-				// 	id: 4,
-				// 	title: "link-youtube",
-				// 	path: "https://www.youtube.com/channel/UCjld1tyVHRNy_pe3ROLiLhw",
-				// 	icon: <IoLogoYoutube />,
-				// },
-			],
-		},
-		{
-			id: 2,
 			widgetTitle: "widget-title-contact",
 			lists: [
 				{
@@ -285,7 +285,7 @@ export const footerContemporary = {
 			],
 		},
 		{
-			id: 3,
+			id: 2,
 			widgetTitle: "widget-title-about",
 			lists: [
 				{
@@ -311,7 +311,7 @@ export const footerContemporary = {
 			],
 		},
 		{
-			id: 4,
+			id: 3,
 			widgetTitle: "widget-title-customer-care",
 			lists: [
 				{
@@ -332,7 +332,7 @@ export const footerContemporary = {
 			],
 		},
 		{
-			id: 5,
+			id: 4,
 			widgetTitle: "widget-title-our-information",
 			lists: [
 				{

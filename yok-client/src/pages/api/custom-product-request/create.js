@@ -64,7 +64,8 @@ export default async function handler(req, res) {
 								"Both name and imageUrl cannot be provided simultaneously.",
 						});
 					}
-
+					console.log("Image :: ", image);
+					console.log("Image File :: ", imageFile);
 					let imageUrlToSave = null;
 
 					// Upload image to S3 if provided
@@ -81,6 +82,7 @@ export default async function handler(req, res) {
 
 						try {
 							const data = await s3.upload(params).promise();
+							console.log("Data :: ", data);
 							imageUrlToSave = data.Location;
 						} catch (error) {
 							console.error(
@@ -92,6 +94,8 @@ export default async function handler(req, res) {
 							});
 						}
 					}
+
+					console.log("Image Url :: ".imageUrlToSave);
 
 					// Create a new CustomProduct document
 					const customProduct = new CustomProductRequest({
