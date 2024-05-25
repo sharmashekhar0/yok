@@ -1,22 +1,12 @@
-// pages/api/yourApiRoute.js
+export const dynamic = "force-dynamic"; // defaults to auto
 
 export async function GET(request) {
-	const response = new Response("Hello, Next.js!", {
+	return new Response("Hello, Next.js!", {
 		status: 200,
 		headers: {
-			"Content-Type": "text/plain",
+			"Access-Control-Allow-Origin": "http://3.110.207.87",
+			"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+			"Access-Control-Allow-Headers": "Content-Type, Authorization",
 		},
 	});
-
-	// Apply the CORS middleware
-	await new Promise((resolve, reject) => {
-		corsMiddleware(request, response, (result) => {
-			if (result instanceof Error) {
-				return reject(result);
-			}
-			return resolve(result);
-		});
-	});
-
-	return response;
 }
