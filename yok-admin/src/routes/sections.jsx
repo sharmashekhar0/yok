@@ -11,6 +11,7 @@ import RolesView from 'src/sections/roles/view/RolesView';
 import ShippingView from 'src/sections/shipping/view/ShippingView';
 import TransectionView from 'src/sections/Transection/view/TransectionView';
 import TermsAndConditions from 'src/sections/termsAndConditions/termsAndConditions';
+import RefundPolicy from 'src/sections/RefundPolicy/RefundPolicy';
 import PrivacyPolicy from 'src/sections/PrivacyPolicy/PrivacyPolicy';
 import AboutUs from 'src/sections/AboutUs/AboutUs';
 import Submenu from 'src/sections/submenu/Submenu';
@@ -23,6 +24,8 @@ export const IndexPage = lazy(() => import('src/pages/app'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/user'));
 export const TestimonialPage = lazy(() => import('src/pages/Testimonial'));
+export const ColorPage = lazy(() => import('src/pages/Color'));
+export const VariationPage = lazy(() => import('src/pages/Variation'));
 export const CustomProductPage = lazy(() => import('src/pages/CustomProduct'));
 export const CustomProductRequestsPage = lazy(() => import('src/pages/CustomProductRequests'));
 export const BrandPage = lazy(() => import('src/pages/Brand'));
@@ -89,12 +92,15 @@ export default function Router() {
               { path: 'shipping', element: <ShippingView /> },
               { path: 'transaction', element: <TransectionView /> },
               { path: 'testimonial', element: <TestimonialPage /> },
+              { path: 'color', element: <ColorPage /> },
+              { path: 'variation', element: <VariationPage /> },
               { path: 'custom-product', element: <CustomProductPage /> },
-              // { path: 'custom-product-requests', element: <CustomProductRequestsPage /> },
+              { path: 'custom-product-requests', element: <CustomProductRequestsPage /> },
               { path: 'payment-setting', element: <PaymentSetting /> },
               // { path: "invoice", element: <InvoiceView /> },
               { path: 'rating-approval', element: <RatingApprovalView /> },
               { path: 'terms-and-conditions', element: <TermsAndConditions /> },
+              { path: 'refund-policy', element: <RefundPolicy /> },
               { path: 'privacy-policy', element: <PrivacyPolicy /> },
               { path: 'sub-menu', element: <Submenu /> },
               { path: 'sub-menu/create', element: <CreateSubmenu /> },

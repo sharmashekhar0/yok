@@ -2,6 +2,38 @@ import axios from 'axios';
 
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
+export const moveToShiprocket = async (orderData) => {
+  try {
+    console.log(orderData);
+    const response = await axios.post(`${BASE_URL}/shiprocket/create`, orderData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw new Error('Unable to Move to Shiprocket');
+  }
+};
+
+export const updatePaymentGatewayKeys = async (active) => {
+  try {
+    console.log(active);
+    const response = await axios.post(`${BASE_URL}/payment-gateway/update-active`, active, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating keys:', error);
+    throw new Error('Unable to Update Payment Gateway');
+  }
+};
+
 export const createProductAPI = async (productData) => {
   try {
     const response = await axios.post(`${BASE_URL}/product/create`, productData, {
@@ -9,6 +41,98 @@ export const createProductAPI = async (productData) => {
         'Content-Type': 'multipart/form-data',
       },
     });
+    return response.data;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw error;
+  }
+};
+
+export const createColor = async (data) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/color/create`, data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw error;
+  }
+};
+
+export const getAllColor = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/color/get`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw error;
+  }
+};
+
+export const deleteColor = async (id) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/color/delete`,
+      { id },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw error;
+  }
+};
+
+export const createVariation = async (data) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/variation/create`, data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw error;
+  }
+};
+
+export const getAllVariation = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/variation/get`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw error;
+  }
+};
+
+export const deleteVariation = async (id) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/variation/delete`,
+      { id },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error('Error creating product:', error);
@@ -130,6 +254,26 @@ export const deleteBanner = async (id) => {
   try {
     const response = await axios.post(
       `${BASE_URL}/banner/delete`,
+      { id },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    console.log(response.data);
+
+    return response.data;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw error;
+  }
+};
+
+export const deleteOrder = async (id) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/order/delete`,
       { id },
       {
         headers: {
@@ -338,6 +482,21 @@ export const fetchTermsCondition = async () => {
   }
 };
 
+export const fetchRefundPolicy = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/refund-policy/get`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw error;
+  }
+};
+
 export const fetchAboutUs = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/about-us/get`, {
@@ -501,7 +660,7 @@ export const editProductAPI = async (productData) => {
       },
     });
 
-    return response.data;
+    return response?.data;
   } catch (error) {
     console.error('Error creating product:', error);
     throw error;

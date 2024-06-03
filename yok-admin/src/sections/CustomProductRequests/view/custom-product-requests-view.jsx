@@ -54,6 +54,7 @@ export default function CustomProductRequestsPage() {
       const response = await getCustomProductRequests();
       console.log('Custom Product Requests :: ', response?.data);
       setCustomProductRequests(response?.data);
+      console.log(response?.data);
     } catch (error) {
       console.log('error', error);
     }
@@ -166,13 +167,30 @@ export default function CustomProductRequestsPage() {
           <div className="table-container">
             <table className="product-table">
               <thead>
+                {/* {
+      _id: '6658157eeba90c4d11c9dcf7',
+      userId: '66181b87e400ebc6d8a139a1',
+      name: 'Hugh Jackman',
+      imageUrl: 
+        'https://myawsproductsbucket.s3.ap-south-1.amazonaws.com/1717048702287-user%20%283%29.png',
+      color: '#0400f5',
+      side: 'front',
+      customizationType: 'Print',
+      customizePolos: '',
+      customizeBasics: 'Center',
+      createdAt: '2024-05-30T05:58:22.966Z',
+      updatedAt: '2024-05-30T05:58:22.966Z',
+      __v: 0
+    }
+  ] */}
                 <tr>
                   <th>ID</th>
-                  <th>Product</th>
-                  <th>Sale Price</th>
-                  <th>Price</th>
-                  <th>Quantity</th>
-                  <th>Action</th> {/* You can replace this with the actual action column */}
+                  <th>Product Name</th>
+                  <th>Name</th>
+                  <th>Image</th>
+                  <th>Color</th>
+                  <th>Side</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -180,10 +198,23 @@ export default function CustomProductRequestsPage() {
                   filteredProducts.map((product, i) => (
                     <tr key={product.id}>
                       <td>{i + 1}</td>
+                      <td>{product.productName}</td>
                       <td>{product.name}</td>
-                      <td>{product.sale_price}</td>
-                      <td>{product.price}</td>
-                      <td>{product.quantity}</td>
+                      <td>
+                        <img src={product.imageUrl} height={'80px'} width={'80px'} alt="" />
+                      </td>
+                      <td>
+                        <div
+                          style={{
+                            backgroundColor: product.color,
+                            height: '40px',
+                            width: '40px',
+                            display: 'inline-block',
+                          }}
+                        ></div>
+                      </td>
+
+                      <td>{product.side}</td>
                       <td>
                         <IconButton onClick={() => handleView(product)} title="View">
                           <VisibilityIcon className="aquablue" />

@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import usePrice from "@framework/product/use-price";
 import { useCart } from "@contexts/cart/cart.context";
 import Cookies from "js-cookie";
+import axios from "axios";
 
 interface CheckoutInputType {
 	firstName: string;
@@ -19,8 +20,9 @@ interface CheckoutInputType {
 	email: string;
 	address: string;
 	city: string;
-	zipCode: string;
+	pincode: string;
 	save: boolean;
+	state: string;
 	note: string;
 	paymentMethod: string;
 	response: object;
@@ -207,11 +209,14 @@ const CheckoutForm: React.FC = () => {
 			};
 
 			console.log("inputData", inputData);
+			console.log(inputData);
+			// Step 1: Create
 
-			// Step 1: Create Order
 			const allProduct = items.map((product) => ({
-				product: product._id,
-				quantity: product?.quantity || 0,
+				name: product._id,
+				sku: product._id,
+				units: product?.quantity || 0,
+				selling_price: product.price,
 			}));
 			const orderData = {
 				user: currentUserData?._id,
@@ -236,7 +241,7 @@ const CheckoutForm: React.FC = () => {
 					// Make phonepe payment
 					console.log("Making phonepe payment...");
 					inputData.totalPrice = discountedAmount;
-					const { data } = await http.post(
+					const { data } = await axios.post(
 						API_ENDPOINTS.CREATE_ORDER_PHONEPAY_PAYMENT,
 						inputData
 					);
@@ -451,12 +456,18 @@ const CheckoutForm: React.FC = () => {
 						/>
 
 						<Input
-							labelKey="Postcode *"
-							{...register("zipCode")}
+							labelKey="State *"
+							{...register("state")}
 							variant="solid"
 							className="w-full lg:w-1/2 ltr:lg:ml-3 rtl:lg:mr-3 mt-2 md:mt-0"
 						/>
 					</div>
+					<Input
+						labelKey="Postcode *"
+						{...register("pincode")}
+						variant="solid"
+						className="w-full lg:w-1/2 ltr:lg:ml-3 rtl:lg:mr-3 mt-2 md:mt-0"
+					/>
 					<div className="items-center">
 						<p>Select Payment Option</p>
 						<div>

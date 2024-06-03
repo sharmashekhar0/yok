@@ -26,7 +26,7 @@ module.exports = withPWA({
 					{ key: "Access-Control-Allow-Credentials", value: "true" },
 					{
 						key: "Access-Control-Allow-Origin",
-						value: "http://3.110.207.87",
+						value: "*",
 					}, // replace this your actual origin
 					{
 						key: "Access-Control-Allow-Methods",
@@ -45,7 +45,7 @@ module.exports = withPWA({
 					{ key: "Access-Control-Allow-Credentials", value: "true" },
 					{
 						key: "Access-Control-Allow-Origin",
-						value: "http://3.110.207.87",
+						value: "*",
 					}, // replace this your actual origin
 					{
 						key: "Access-Control-Allow-Methods",

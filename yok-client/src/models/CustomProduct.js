@@ -39,15 +39,15 @@ try {
 			price: { type: Number, required: true },
 			sale_price: { type: Number },
 			quantity: { type: Number },
-			variations: [
+			colors: [
 				{
-					id: { type: Number },
-					value: { type: mongoose.Schema.Types.Mixed },
-					attribute: {
-						id: { type: Number },
-						name: { type: String },
-						slug: { type: String },
-					},
+					name: { type: String },
+					hexcode: { type: String },
+				},
+			],
+			sizes: [
+				{
+					size: { type: String },
 				},
 			],
 			meta: [

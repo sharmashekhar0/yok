@@ -16,10 +16,10 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
 
 	return (
 		<div className={cn("relative flex-shrink-0 categoryMenu", className)}>
-			<div className="flex items-center justify-center gap-2 px-3.5 xl:px-4 text-sm relative before:absolute before:-bottom-2.5 before:h-2.5 before:w-full before:z-10 font-semibold text-white transition-colors rounded-md cursor-pointer h-11 bg-heading hover:bg-black">
+			{/* <div className="flex items-center justify-center gap-2 px-3.5 xl:px-4 text-sm relative before:absolute before:-bottom-2.5 before:h-2.5 before:w-full before:z-10 font-semibold text-white transition-colors rounded-md cursor-pointer h-11 bg-heading hover:bg-black">
 				<HiMenu className="text-xl" />
 				{t("menu-all-categories")}
-			</div>
+			</div> */}
 			{categoryMenu && Array.isArray(categoryMenu) && (
 				<div className="absolute invisible bg-white opacity-0 subMenu shadow-header ltr:left-0 rtl:right-0">
 					<ul className="relative py-5 text-sm text-body">
@@ -43,6 +43,10 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
 					</ul>
 				</div>
 			)}
+			{/* <div className="flex items-center justify-center gap-2 px-3.5 xl:px-4 text-sm relative before:absolute before:-bottom-2.5 before:h-2.5 before:w-full before:z-10 font-semibold text-white transition-colors rounded-md cursor-pointer h-11 bg-heading hover:bg-black">
+				<HiMenu className="text-xl" />
+				{"Custom Product"}
+			</div> */}
 		</div>
 	);
 };

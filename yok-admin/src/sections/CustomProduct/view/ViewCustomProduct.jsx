@@ -42,8 +42,8 @@ const colorsValue = ['Red', 'Green', 'Orange'];
 const ViewCustomProduct = ({ clickedProduct }) => {
   const navigate = useNavigate();
   const [tags, setTags] = React.useState([]);
-  const [color, setColor] = React.useState([]);
-  const [variations, setVariations] = React.useState([]);
+  const [selectedColors, setSelectedColors] = useState([]);
+  const [variations, setVariations] = useState([]);
   const [tagsList, setTagsList] = useState([]);
   const [tag, setTag] = useState('');
   const [categories, setCategories] = useState([]);
@@ -265,33 +265,8 @@ const ViewCustomProduct = ({ clickedProduct }) => {
   };
 
   useEffect(() => {
-    setColor(
-      clickedProduct?.variations
-        .map((color) => {
-          if (color.attribute.name === 'Color') {
-            return color.value;
-          }
-        })
-        .filter((color) => color !== undefined)
-    );
-
-    let shortForms = {
-      XS: 'Extra Small',
-      S: 'Small',
-      M: 'Medium',
-      L: 'Large',
-      XL: 'Extra Large',
-    };
-
-    setVariations(
-      clickedProduct?.variations
-        .map((color) => {
-          if (color.attribute.name === 'Size') {
-            return shortForms[color.value];
-          }
-        })
-        .filter((color) => color !== undefined)
-    );
+    setSelectedColors(clickedProduct?.colors);
+    setVariations(clickedProduct?.sizes);
     if (clickedProduct) {
       const updatedProductData = {
         ...productData,
@@ -547,17 +522,17 @@ const ViewCustomProduct = ({ clickedProduct }) => {
                 labelId="demo-multiple-checkbox-label"
                 id="color-multiple-checkbox"
                 multiple
-                value={color}
+                disabl
+                value={selectedColors}
                 onChange={(event) => handleTagChange('colors', event)}
                 input={<OutlinedInput label="Colors" />}
-                renderValue={(selected) => selected.join(', ')}
+                renderValue={(selected) => selected.map((item) => item.name).join(', ')}
                 MenuProps={MenuProps}
-                disabled
               >
-                {colorsValue.map((name) => (
-                  <MenuItem key={name} value={name}>
-                    <Checkbox checked={color.indexOf(name) > -1} />
-                    <ListItemText primary={name} />
+                {selectedColors.map((color) => (
+                  <MenuItem key={color._id} value={color}>
+                    <Checkbox checked={true} />
+                    <ListItemText primary={color.name} />
                   </MenuItem>
                 ))}
               </Select>
@@ -566,24 +541,26 @@ const ViewCustomProduct = ({ clickedProduct }) => {
 
           <div className="mt-4">
             <FormControl fullWidth>
-              <InputLabel id="demo-multiple-checkbox-label">Variations</InputLabel>
+              <InputLabel id="demo-multiple-checkbox-label">Sizes</InputLabel>
               <Select
                 labelId="demo-multiple-checkbox-label"
                 id="demo-multiple-checkbox"
                 multiple
                 value={variations}
                 onChange={(event) => handleTagChange('variations', event)}
-                input={<OutlinedInput label="Variations" />}
-                renderValue={(selected) => selected.join(', ')}
-                MenuProps={MenuProps}
+                input={<OutlinedInput label="Sizes" />}
                 disabled
+                renderValue={(selected) => selected.map((item) => item.size).join(', ')}
               >
-                {variationsValue.map((name) => (
-                  <MenuItem key={name} value={name}>
-                    <Checkbox checked={variations.indexOf(name) > -1} />
-                    <ListItemText primary={name} />
-                  </MenuItem>
-                ))}
+                {variations.map((variation) => {
+                  console.log(variation);
+                  return (
+                    <MenuItem key={variation._id} value={variation}>
+                      <Checkbox checked={true} />
+                      <ListItemText primary={variation.size} />
+                    </MenuItem>
+                  );
+                })}
               </Select>
             </FormControl>
           </div>

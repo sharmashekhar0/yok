@@ -1,15 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import isEmpty from "lodash/isEmpty";
+// import isEmpty from "lodash/isEmpty";
+import cn from "classnames";
 import { ROUTES } from "@utils/routes";
 import { useUI } from "@contexts/ui.context";
 import Button from "@components/ui/button";
 import Counter from "@components/common/counter";
 import { useCart } from "@contexts/cart/cart.context";
-import { ProductAttributes } from "@components/product/product-attributes";
+// import { ProductAttributes } from "@components/product/product-attributes";
+
 import { generateCartItem } from "@utils/generate-cart-item";
 import usePrice from "@framework/product/use-price";
-import { getVariations } from "@framework/utils/get-variations";
+// import { getVariations } from "@framework/utils/get-variations";
+
 import { useTranslation } from "next-i18next";
 import Cookies from "js-cookie";
 // import jwt from "jsonwebtoken";
@@ -38,22 +41,41 @@ export default function ProductPopup() {
 	const [attributes, setAttributes] = useState<{ [key: string]: string }>({});
 	const [viewCartBtn, setViewCartBtn] = useState<boolean>(false);
 	const [addToCartLoader, setAddToCartLoader] = useState<boolean>(false);
+	const [colors, setColors] = useState([]);
+	const [sizes, setSizes] = useState([]);
+	const [selectedColor, setSelectedColor] = useState(null);
+	const [selectedSize, setSelectedSize] = useState(null);
 	const { price, basePrice, discount } = usePrice({
 		amount: data.sale_price ? data.sale_price : data.price,
 		baseAmount: data.price,
 		currencyCode: "INR",
 	});
-	const variations = getVariations(data.variations);
+	// const variations = getVariations(data.variations);
 	// const { slug } = data;
 	const { image, name, description, _id } = data;
 	console.log("data cart", data);
 
-	const isSelected = !isEmpty(variations)
-		? !isEmpty(attributes) &&
-		  Object.keys(variations).every((variation) =>
-				attributes.hasOwnProperty(variation)
-		  )
-		: true;
+	// const isSelected = !isEmpty(variations)
+	// 	? !isEmpty(attributes) &&
+	// 	  Object.keys(variations).every((variation) =>
+	// 			attributes.hasOwnProperty(variation)
+	// 	  )
+	// 	: true;
+
+	const handleColorSelect = (color) => {
+		setSelectedColor(color.hexcode);
+	};
+
+	const handleSizeSelect = (size) => {
+		setSelectedSize(size.size);
+	};
+
+	const isSelected = selectedColor && selectedSize;
+
+	useEffect(() => {
+		setColors(data?.colors);
+		setSizes(data?.sizes);
+	}, []);
 
 	async function addToCart() {
 		if (!isSelected) return;
@@ -83,8 +105,8 @@ export default function ProductPopup() {
 					price: item.price,
 					quantity,
 					attributes: {
-						size: item?.attributes?.size,
-						color: item?.attributes?.color,
+						size: selectedColor,
+						color: selectedSize,
 					},
 					itemTotal: quantity * item.price,
 				}),
@@ -167,17 +189,65 @@ export default function ProductPopup() {
 						</div>
 					</div>
 
-					{Object.keys(variations).map((variation) => {
-						return (
-							<ProductAttributes
-								key={`popup-attribute-key${variation}`}
-								title={variation}
-								attributes={variations[variation]}
-								active={attributes[variation]}
-								onClick={handleAttribute}
-							/>
-						);
-					})}
+					<div className="pb-3 border-b border-gray-300">
+						<h3 className="text-base md:text-lg text-heading font-semibold mb-2.5 capitalize">
+							Sizes
+						</h3>
+						<ul className="flex flex-wrap colors ltr:-mr-3 rtl:-ml-3">
+							{sizes?.map((s) => {
+								return (
+									<li
+										key={`${s?.size}-${s._id}`}
+										onClick={() => handleSizeSelect(s)}
+										className={cn(
+											"cursor-pointer rounded border w-9 md:w-11 h-9 md:h-11 p-1 mb-2 md:mb-3 ltr:mr-2 rtl:ml-2 ltr:md:mr-3 rtl:md:ml-3 flex justify-center items-center text-heading text-xs md:text-sm uppercase font-semibold transition duration-200 ease-in-out hover:border-black",
+											{
+												"border-black":
+													s.size === selectedSize,
+												"border-gray-100":
+													s.size !== selectedSize,
+											}
+										)}
+									>
+										<span className="w-full h-full rounded flex items-center justify-center">
+											{s.size}
+										</span>
+									</li>
+								);
+							})}
+						</ul>
+						<h3 className="text-base md:text-lg text-heading font-semibold mb-2.5 capitalize">
+							Colors
+						</h3>
+						<ul className="flex flex-wrap colors ltr:-mr-3 rtl:-ml-3">
+							{colors?.map((color) => {
+								return (
+									<li
+										key={`${color?.hexcode}-${color._id}`}
+										onClick={() => handleColorSelect(color)}
+										className={cn(
+											"cursor-pointer rounded border w-9 md:w-11 h-9 md:h-11 p-1 mb-2 md:mb-3 ltr:mr-2 rtl:ml-2 ltr:md:mr-3 rtl:md:ml-3 flex justify-center items-center text-heading text-xs md:text-sm uppercase font-semibold transition duration-200 ease-in-out hover:border-black",
+											{
+												"border-black":
+													color.hexcode ===
+													selectedColor,
+												"border-gray-100":
+													color.hexcode !==
+													selectedColor,
+											}
+										)}
+									>
+										<span
+											className="block w-full h-full rounded"
+											style={{
+												backgroundColor: color?.hexcode,
+											}}
+										/>
+									</li>
+								);
+							})}
+						</ul>
+					</div>
 
 					<div className="pt-2 md:pt-4">
 						<div className="flex items-center justify-between mb-4 gap-x-3 sm:gap-x-4">

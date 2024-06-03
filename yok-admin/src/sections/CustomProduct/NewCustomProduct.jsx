@@ -17,6 +17,8 @@ import {
   TextField,
 } from '@mui/material';
 
+import { getAllColor, getAllVariation } from 'src/api/api';
+
 import OutlinedInput from '@mui/material/OutlinedInput';
 import ListItemText from '@mui/material/ListItemText';
 import { useNavigate } from 'react-router-dom';
@@ -40,8 +42,10 @@ const colorsValue = ['Red', 'Green', 'Orange'];
 const NewCustomProduct = () => {
   const navigate = useNavigate();
   const [tags, setTags] = React.useState([]);
-  const [color, setColor] = React.useState([]);
-  const [variations, setVariations] = React.useState([]);
+  const [colors, setColors] = useState([]);
+  const [selectedColors, setSelectedColors] = useState([]);
+  const [variations, setVariations] = useState([]);
+  const [variationOptions, setVariationOptions] = useState([]);
   const [tagsList, setTagsList] = useState([]);
   const [tag, setTag] = useState('');
   const [brands, setBrands] = useState([]);
@@ -53,6 +57,26 @@ const NewCustomProduct = () => {
     try {
       const response = await getAllBrands();
       setBrands(response.brands);
+    } catch (error) {
+      console.log('Error while getting brands :: ', error);
+    }
+  };
+
+  const getColorsHandler = async () => {
+    try {
+      const response = await getAllColor();
+      setColors(response?.data?.colors);
+      console.log('Colors :: ', response?.data?.colors);
+    } catch (error) {
+      console.log('Error while getting brands :: ', error);
+    }
+  };
+
+  const getVariationsHandler = async () => {
+    try {
+      const response = await getAllVariation();
+      console.log('Variations :: ', response?.data?.variations);
+      setVariationOptions(response?.data?.variations);
     } catch (error) {
       console.log('Error while getting brands :: ', error);
     }
@@ -71,6 +95,8 @@ const NewCustomProduct = () => {
   useEffect(() => {
     getBrandsHandler();
     getCategoriesHandler();
+    getColorsHandler();
+    getVariationsHandler();
   }, []);
 
   const [productData, setProductData] = useState({
@@ -139,44 +165,10 @@ const NewCustomProduct = () => {
       updatedErrors[name] = '';
     }
     if (name === 'colors') {
-      setColor(typeof value === 'string' ? value.split(',') : value);
-      updatedErrors[name] = '';
-
-      newVariations = value.map((color) => ({
-        id: variationsValue.length + 1,
-        value: color,
-        attribute: {
-          id: 1,
-          name: 'Color',
-          slug: 'color',
-        },
-      }));
-      existingVariations = productData.variations.filter(
-        (variation) => variation.attribute.slug !== 'color'
-      );
+      setSelectedColors(value);
     }
     if (name === 'variations') {
-      setVariations(typeof value === 'string' ? value.split(',') : value);
-      let shortForms = {
-        Small: 'S',
-        Medium: 'M',
-        Large: 'L',
-        'Extra Large': 'XL',
-      };
-      newVariations = value.map((size) => ({
-        id: variationsValue.length + 1,
-        value: shortForms[size],
-        attribute: {
-          id: 1,
-          name: 'Size',
-          slug: 'size',
-        },
-      }));
-      updatedErrors[name] = '';
-      // Filter out existing variations that are not sizes
-      existingVariations = productData.variations.filter(
-        (variation) => variation.attribute.slug !== 'size'
-      );
+      setVariations(value);
     }
 
     // Combine existing variations with new variations
@@ -290,6 +282,14 @@ const NewCustomProduct = () => {
     setErrors(updatedErrors);
   };
 
+  function removePropertiesFromArray(arr, propertiesToRemove) {
+    return arr.map((obj) => {
+      const newObj = { ...obj };
+      propertiesToRemove.forEach((property) => delete newObj[property]);
+      return newObj;
+    });
+  }
+
   const handleCreateProduct = async () => {
     try {
       const updatedErrors = {};
@@ -345,6 +345,13 @@ const NewCustomProduct = () => {
         return;
       }
 
+      const colors =
+        removePropertiesFromArray(selectedColors, ['_id', 'createdAt', 'updatedAt', '__v']) || [];
+
+      const sizes = variations?.map((size) => {
+        return { size };
+      });
+
       const formData = new FormData();
       formData.append('image', productData.image);
       formData.append('name', productData.name);
@@ -358,7 +365,8 @@ const NewCustomProduct = () => {
       formData.append('tags', JSON.stringify(tagsList));
       formData.append('brand', brand);
       formData.append('gender', JSON.stringify(productData.gender));
-      formData.append('variations', JSON.stringify(productData.variations));
+      formData.append('colors', JSON.stringify(colors));
+      formData.append('sizes', JSON.stringify(sizes));
       formData.append('meta', JSON.stringify(productData.meta));
       formData.append('type', productData.type);
 
@@ -669,16 +677,20 @@ const NewCustomProduct = () => {
                 labelId="demo-multiple-checkbox-label"
                 id="color-multiple-checkbox"
                 multiple
-                value={color}
+                value={selectedColors}
                 onChange={(event) => handleTagChange('colors', event)}
                 input={<OutlinedInput label="Colors" />}
-                renderValue={(selected) => selected.join(', ')}
+                renderValue={(selected) => selected.map((item) => item.name).join(', ')}
                 MenuProps={MenuProps}
               >
-                {colorsValue.map((name) => (
-                  <MenuItem key={name} value={name}>
-                    <Checkbox checked={color.indexOf(name) > -1} />
-                    <ListItemText primary={name} />
+                {colors.map((color) => (
+                  <MenuItem key={color._id} value={color}>
+                    <Checkbox
+                      checked={selectedColors.some(
+                        (selectedColor) => selectedColor.name === color.name
+                      )}
+                    />
+                    <ListItemText primary={color.name} />
                   </MenuItem>
                 ))}
               </Select>
@@ -688,21 +700,20 @@ const NewCustomProduct = () => {
 
           <div className="mt-4">
             <FormControl fullWidth>
-              <InputLabel id="demo-multiple-checkbox-label">Variations</InputLabel>
+              <InputLabel id="demo-multiple-checkbox-label">Sizes</InputLabel>
               <Select
                 labelId="demo-multiple-checkbox-label"
                 id="demo-multiple-checkbox"
                 multiple
                 value={variations}
                 onChange={(event) => handleTagChange('variations', event)}
-                input={<OutlinedInput label="Variations" />}
+                input={<OutlinedInput label="Sizes" />}
                 renderValue={(selected) => selected.join(', ')}
-                MenuProps={MenuProps}
               >
-                {variationsValue.map((name) => (
-                  <MenuItem key={name} value={name}>
-                    <Checkbox checked={variations.indexOf(name) > -1} />
-                    <ListItemText primary={name} />
+                {variationOptions.map(({ _id, size }) => (
+                  <MenuItem key={_id} value={size}>
+                    <Checkbox checked={variations.indexOf(size) > -1} />
+                    <ListItemText primary={size} />
                   </MenuItem>
                 ))}
               </Select>

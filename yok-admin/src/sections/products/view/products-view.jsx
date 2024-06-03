@@ -211,7 +211,7 @@ export default function ProductsView() {
               <tbody>
                 {filteredProducts && filteredProducts.length > 0 ? (
                   filteredProducts.map((product, i) => (
-                    <tr key={product.id}>
+                    <tr key={product._id}>
                       <td>{i + 1}</td>
                       <td>{product.name}</td>
                       <td>{product.sale_price}</td>

@@ -30,7 +30,7 @@ export default async function handler(req, res) {
 					// Access form data
 					const {
 						name,
-						image,
+						productName,
 						color,
 						side,
 						customizationType,
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
 						: null;
 
 					// Check if both name and image are provided
-					if (name && image) {
+					if (name && imageFile) {
 						console.error(
 							"Both name and imageUrl cannot be provided simultaneously."
 						);
@@ -64,7 +64,7 @@ export default async function handler(req, res) {
 								"Both name and imageUrl cannot be provided simultaneously.",
 						});
 					}
-					console.log("Image :: ", image);
+
 					console.log("Image File :: ", imageFile);
 					let imageUrlToSave = null;
 
@@ -95,11 +95,12 @@ export default async function handler(req, res) {
 						}
 					}
 
-					console.log("Image Url :: ".imageUrlToSave);
-
+					console.log("Image Url :: ", imageUrlToSave);
+					console.log(productName);
 					// Create a new CustomProduct document
 					const customProduct = new CustomProductRequest({
 						userId,
+						productName,
 						name: name ? name : null,
 						imageUrl: imageUrlToSave,
 						color: color ? color : "",

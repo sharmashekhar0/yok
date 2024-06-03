@@ -8,6 +8,7 @@ import Divider from "@components/ui/divider";
 import Breadcrumb from "@components/common/breadcrumb";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetServerSideProps } from "next";
+import generateShiprocketToken from "../../lib/shiprocket-config";
 
 import Button from "@components/ui/button";
 import Counter from "@components/common/counter";
@@ -229,6 +230,13 @@ export default function ProductPage() {
 		height: 0,
 	});
 
+	useEffect(() => {
+		const generate = async () => {
+			await generateShiprocketToken();
+		};
+		generate();
+	}, []);
+
 	const { isLoading } = useProductQuery(slug as string);
 	const { addItemToCart } = useCart();
 	const [attributes, setAttributes] = useState<{ [key: string]: string }>({});
@@ -243,22 +251,46 @@ export default function ProductPage() {
 	const [customizePolos, setCustomizePolos] = useState<string>("");
 	const [customizeBasics, setCustomizeBasics] = useState<string>("");
 	const [checkedBox, setCheckedBox] = useState("null");
-	const [selectedColor, setSelectedColor] = useState("");
 	const [image, setImage] = useState(null);
+	const [colors, setColors] = useState([]);
+	const [sizes, setSizes] = useState([]);
+	const [selectedColor, setSelectedColor] = useState(null);
+	const [selectedSize, setSelectedSize] = useState(null);
 	const [isOptionSelected, setIsOptionSelected] = useState(false);
 
 	const [uploadedImageUrl, setUploadedImageUrl] = useState("");
 
+	const handleColorSelect = (color) => {
+		setSelectedColor(color.hexcode);
+	};
+
+	const handleNameChange = (e) => {
+		setNameHolder(e.target.value);
+		setImage(null); // Clear image input when name is changed
+		setUploadedImageUrl(""); // Clear uploaded image URL when name is changed
+	};
+
+	const handleSizeSelect = (size) => {
+		setSelectedSize(size.size);
+	};
+
+	const isSelected = selectedColor && selectedSize;
+
 	useEffect(() => {
 		const loadCartData = async () => {
 			try {
-				const response = await axios.post(`/api/product/get-single`, {
-					slug,
-				});
+				const response = await axios.post(
+					`/api/custom-product/get-single`,
+					{
+						slug,
+					}
+				);
 				console.log("response product hahj", response);
 				setData(response?.data);
 				console.log("Response Data :: ", response.data);
 				setImageGallery(response.data.gallery);
+				setColors(response?.data?.colors);
+				setSizes(response?.data?.sizes);
 			} catch (error) {
 				console.log("error on get cart", error);
 			}
@@ -303,20 +335,24 @@ export default function ProductPage() {
 	if (isLoading) return <p>Loading...</p>;
 	const variations = getVariations(data?.variations);
 
-	const isSelected = !isEmpty(variations)
-		? !isEmpty(attributes) &&
-		  Object.keys(variations).every((variation) =>
-				attributes.hasOwnProperty(variation)
-		  )
-		: true;
+	// const isSelected = !isEmpty(variations)
+	// 	? !isEmpty(attributes) &&
+	// 	  Object.keys(variations).every((variation) =>
+	// 			attributes.hasOwnProperty(variation)
+	// 	  )
+	// 	: true;
 
 	const createCustomProductHandler = async () => {
 		try {
 			const formData = new FormData();
+
+			formData.append("productName", data.name);
+			console.log(data.name);
 			formData.append("name", nameHolder);
 			formData.append("image", image);
 			formData.append("userId", userData?._id);
 			formData.append("color", selectedColor);
+			formData.append("size", selectedSize);
 			formData.append("side", checkedBox);
 			formData.append("customizationType", customizationType);
 			formData.append("customizePolos", customizePolos);
@@ -361,8 +397,8 @@ export default function ProductPage() {
 						price: item?.price,
 						quantity,
 						attributes: {
-							size: item?.attributes?.size,
-							color: item?.attributes?.color,
+							size: selectedColor,
+							color: selectedSize,
 						},
 						itemTotal: quantity * item.price,
 					}),
@@ -487,54 +523,8 @@ export default function ProductPage() {
 				<div className="pt-8">
 					<Breadcrumb />
 				</div>
-				{/* <ProductSingleDetails /> */}
-				{/* <RelatedProducts sectionHeading="text-related-products" /> */}
-				{/* <Subscription /> */}
-				<div className="block lg:grid grid-cols-9 gap-x-10 xl:gap-x-14 pt-7 pb-10 lg:pb-14 2xl:pb-20 items-start">
-					{/* {width < 1025 ? (
-            <Carousel
-              pagination={{
-                clickable: true,
-              }}
-              breakpoints={productGalleryCarouselResponsive}
-              className="product-gallery"
-              buttonGroupClassName="hidden"
-            >
-              {data?.gallery?.map((item, index: number) => (
-                <SwiperSlide key={`product-gallery-key-${index}`}>
-                  <div className="col-span-1 transition duration-150 ease-in hover:opacity-90">
-                    <img
-                      src={
-                        item?.original ??
-                        "/assets/placeholder/products/product-gallery.svg"
-                      }
-                      alt={`${data?.name}--${index}`}
-                      className="object-cover w-full"
-                    />
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Carousel>
-          ) : (
-            <div className="col-span-4 grid gap-2.5">
-              {data?.gallery?.map((item, index: number) => (
-                <div
-                  key={index}
-                  className="col-span-1 transition duration-150 ease-in hover:opacity-90"
-                >
-                  <img
-                    src={
-                      item?.original ??
-                      "/assets/placeholder/products/product-gallery.svg"
-                    }
-                    alt={`${data?.name}--${index}`}
-                    className="object-cover w-full"
-                  />
-                </div>
-              ))}
-            </div>
-          )} */}
 
+				<div className="block lg:grid grid-cols-9 gap-x-10 xl:gap-x-14 pt-7 pb-10 lg:pb-14 2xl:pb-20 items-start">
 					{width < 1025 ? (
 						<Carousel
 							pagination={{
@@ -549,13 +539,13 @@ export default function ProductPage() {
 									{checkedBox === "front" ? (
 										<img
 											src={
-												// data?.gallery[0] &&
-												// data?.gallery[0]?.original
-												// 	? data?.gallery[0].original
-												// 	: "/assets/placeholder/products/product-gallery.svg"
-												selectedColor === "black"
-													? "https://myawsproductsbucket.s3.ap-south-1.amazonaws.com/1712080240978-prod_product_images_CUS0001RNT-black-front.png"
-													: "https://m.media-amazon.com/images/I/61ckXdPNKTL._SY741_.jpg"
+												data?.gallery[0] &&
+												data?.gallery[0]?.original
+													? data?.gallery[0].original
+													: "/assets/placeholder/products/product-gallery.svg"
+												// selectedColor === "black"
+												// 	? "https://myawsproductsbucket.s3.ap-south-1.amazonaws.com/1712080240978-prod_product_images_CUS0001RNT-black-front.png"
+												// 	: "https://m.media-amazon.com/images/I/61ckXdPNKTL._SY741_.jpg"
 											}
 											alt={`${data?.name}--0`}
 											className="object-cover w-full"
@@ -563,13 +553,13 @@ export default function ProductPage() {
 									) : (
 										<img
 											src={
-												// data?.gallery &&
-												// data?.gallery[1]?.original
-												// 	? data.gallery[1].original
-												// 	: "/assets/placeholder/products/product-gallery.svg"
-												selectedColor === "black"
-													? "https://myawsproductsbucket.s3.ap-south-1.amazonaws.com/1712080240971-prod_product_images_CUS0001RNT-black-back.png"
-													: "https://m.media-amazon.com/images/I/61wrWvif-vL._SY741_.jpg"
+												data?.gallery &&
+												data?.gallery[1]?.original
+													? data.gallery[1].original
+													: "/assets/placeholder/products/product-gallery.svg"
+												// selectedColor === "black"
+												// 	? "https://myawsproductsbucket.s3.ap-south-1.amazonaws.com/1712080240971-prod_product_images_CUS0001RNT-black-back.png"
+												// 	: "https://m.media-amazon.com/images/I/61wrWvif-vL._SY741_.jpg"
 											}
 											alt={`${data?.name}--0`}
 											className="object-cover w-full"
@@ -603,13 +593,13 @@ export default function ProductPage() {
 								{checkedBox === "front" ? (
 									<img
 										src={
-											// data?.gallery &&
-											// data?.gallery[0]?.original
-											// 	? data.gallery[0].original
-											// 	: "/assets/placeholder/products/product-gallery.svg"
-											selectedColor === "Black"
-												? "https://myawsproductsbucket.s3.ap-south-1.amazonaws.com/1712080240978-prod_product_images_CUS0001RNT-black-front.png"
-												: "https://m.media-amazon.com/images/I/61ckXdPNKTL._SY741_.jpg"
+											data?.gallery &&
+											data?.gallery[0]?.original
+												? data.gallery[0].original
+												: "/assets/placeholder/products/product-gallery.svg"
+											// selectedColor === "Black"
+											// 	? "https://myawsproductsbucket.s3.ap-south-1.amazonaws.com/1712080240978-prod_product_images_CUS0001RNT-black-front.png"
+											// 	: "https://m.media-amazon.com/images/I/61ckXdPNKTL._SY741_.jpg"
 										}
 										alt={`${data?.name}--0`}
 										className="object-cover w-full"
@@ -617,13 +607,13 @@ export default function ProductPage() {
 								) : (
 									<img
 										src={
-											// data?.gallery[1] &&
-											// data?.gallery[1]?.original
-											// 	? data.gallery[1].original
-											// 	: "/assets/placeholder/products/product-gallery.svg"
-											selectedColor === "Black"
-												? "https://myawsproductsbucket.s3.ap-south-1.amazonaws.com/1712080240971-prod_product_images_CUS0001RNT-black-back.png"
-												: "https://m.media-amazon.com/images/I/61wrWvif-vL._SY741_.jpg"
+											data?.gallery[1] &&
+											data?.gallery[1]?.original
+												? data.gallery[1].original
+												: "/assets/placeholder/products/product-gallery.svg"
+											// selectedColor === "Black"
+											// 	? "https://myawsproductsbucket.s3.ap-south-1.amazonaws.com/1712080240971-prod_product_images_CUS0001RNT-black-back.png"
+											// 	: "https://m.media-amazon.com/images/I/61wrWvif-vL._SY741_.jpg"
 										}
 										alt={`${data?.name}--0`}
 										className="object-cover w-full"
@@ -674,53 +664,67 @@ export default function ProductPage() {
 							</div>
 						</div>
 
-						<div className="pb-3 border-b border-gray-300 flex">
-							{Object.keys(variations).map((variation) => {
-								return (
-									<div key={variation} className="mr-10">
-										<h3 className="text-base md:text-lg text-heading font-semibold mb-2.5 capitalize">
-											{variation}
-										</h3>
-										<ul className="flex flex-wrap colors ltr:-mr-3 rtl:-ml-3">
-											{variations[variation]?.map(
-												({ id, value, meta }) => (
-													<li
-														key={`${value}-${id}`}
-														className={cn(
-															"cursor-pointer rounded border  w-9 md:w-11 h-9 md:h-11 p-1 mb-2 md:mb-3 ltr:mr-2 rtl:ml-2 ltr:md:mr-3 rtl:md:ml-3 flex justify-center items-center text-heading text-xs md:text-sm uppercase font-semibold transition duration-200 ease-in-out hover:border-black",
-															value ===
-																attributes[
-																	variation
-																]
-																? "border-black"
-																: "border-gray-100"
-														)}
-														onClick={() =>
-															handleAttribute({
-																[variation]:
-																	value,
-															})
-														}
-													>
-														{variation ===
-														"color" ? (
-															<span
-																className="block w-full h-full rounded"
-																style={{
-																	backgroundColor:
-																		meta,
-																}}
-															/>
-														) : (
-															value
-														)}
-													</li>
-												)
+						<div className="pb-3 border-b border-gray-300">
+							<h3 className="text-base md:text-lg text-heading font-semibold mb-2.5 capitalize">
+								Sizes
+							</h3>
+							<ul className="flex flex-wrap colors ltr:-mr-3 rtl:-ml-3">
+								{sizes?.map((s) => {
+									return (
+										<li
+											key={`${s?.size}-${s._id}`}
+											onClick={() => handleSizeSelect(s)}
+											className={cn(
+												"cursor-pointer rounded border w-9 md:w-11 h-9 md:h-11 p-1 mb-2 md:mb-3 ltr:mr-2 rtl:ml-2 ltr:md:mr-3 rtl:md:ml-3 flex justify-center items-center text-heading text-xs md:text-sm uppercase font-semibold transition duration-200 ease-in-out hover:border-black",
+												{
+													"border-black":
+														s.size === selectedSize,
+													"border-gray-100":
+														s.size !== selectedSize,
+												}
 											)}
-										</ul>
-									</div>
-								);
-							})}
+										>
+											<span className="w-full h-full rounded flex items-center justify-center">
+												{s.size}
+											</span>
+										</li>
+									);
+								})}
+							</ul>
+							<h3 className="text-base md:text-lg text-heading font-semibold mb-2.5 capitalize">
+								Colors
+							</h3>
+							<ul className="flex flex-wrap colors ltr:-mr-3 rtl:-ml-3">
+								{colors?.map((color) => {
+									return (
+										<li
+											key={`${color?.hexcode}-${color._id}`}
+											onClick={() =>
+												handleColorSelect(color)
+											}
+											className={cn(
+												"cursor-pointer rounded border w-9 md:w-11 h-9 md:h-11 p-1 mb-2 md:mb-3 ltr:mr-2 rtl:ml-2 ltr:md:mr-3 rtl:md:ml-3 flex justify-center items-center text-heading text-xs md:text-sm uppercase font-semibold transition duration-200 ease-in-out hover:border-black",
+												{
+													"border-black":
+														color.hexcode ===
+														selectedColor,
+													"border-gray-100":
+														color.hexcode !==
+														selectedColor,
+												}
+											)}
+										>
+											<span
+												className="block w-full h-full rounded"
+												style={{
+													backgroundColor:
+														color?.hexcode,
+												}}
+											/>
+										</li>
+									);
+								})}
+							</ul>
 						</div>
 						<div>
 							<button
@@ -766,17 +770,12 @@ export default function ProductPage() {
 														type="text"
 														id="name"
 														value={nameHolder}
-														onChange={(e) => {
-															setUploadedImageUrl(
-																""
-															);
-															setNameHolder(
-																e.target.value
-															);
-														}}
+														onChange={
+															handleNameChange
+														}
 													/>
 												</div>
-												<div>
+												{/* <div>
 													<h3 className="text-base mt-3 md:text-lg text-heading font-semibold mb-2.5 capitalize">
 														Choose Color
 													</h3>
@@ -806,6 +805,41 @@ export default function ProductPage() {
 																checked={
 																	selectedColor ===
 																	"White"
+																}
+															/>
+														</div>
+													</div>
+												</div> */}
+												<div className="mr-10">
+													<h3 className="text-base mt-3 md:text-lg text-heading font-semibold mb-2.5 capitalize">
+														Select Side
+													</h3>
+													<div className="flex">
+														<div className="relative flex items-center mr-10 ">
+															<CheckBox
+																labelKey="Front"
+																onChange={() =>
+																	handleCheckBoxChage(
+																		"front"
+																	)
+																}
+																checked={
+																	checkedBox ===
+																	"front"
+																}
+															/>
+														</div>
+														<div className="relative flex items-center ">
+															<CheckBox
+																labelKey="Back"
+																onChange={() =>
+																	handleCheckBoxChage(
+																		"back"
+																	)
+																}
+																checked={
+																	checkedBox ===
+																	"back"
 																}
 															/>
 														</div>
@@ -848,111 +882,7 @@ export default function ProductPage() {
 
 											<div className="mr-10 mt-4">
 												<h3 className="text-base mt-3 md:text-lg text-heading font-semibold mb-2.5 capitalize">
-													Customize Polos
-												</h3>
-												<div className="flex flex-wrap">
-													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
-														<div className="relative flex items-center">
-															<CheckBox
-																labelKey="Center"
-																checked={
-																	customizePolos ===
-																	"Center"
-																}
-																onChange={() =>
-																	handleCustomizePolosChange(
-																		"Center"
-																	)
-																}
-															/>
-														</div>
-													</div>
-													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
-														<div className="relative flex items-center">
-															<CheckBox
-																labelKey="Right Shoulder"
-																checked={
-																	customizePolos ===
-																	"Right Shoulder"
-																}
-																onChange={() =>
-																	handleCustomizePolosChange(
-																		"Right Shoulder"
-																	)
-																}
-															/>
-														</div>
-													</div>
-													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
-														<div className="relative flex items-center">
-															<CheckBox
-																labelKey="Left Shoulder"
-																checked={
-																	customizePolos ===
-																	"Left Shoulder"
-																}
-																onChange={() =>
-																	handleCustomizePolosChange(
-																		"Left Shoulder"
-																	)
-																}
-															/>
-														</div>
-													</div>
-													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
-														<div className="relative flex items-center">
-															<CheckBox
-																labelKey="Left Chest"
-																checked={
-																	customizePolos ===
-																	"Left Chest"
-																}
-																onChange={() =>
-																	handleCustomizePolosChange(
-																		"Left Chest"
-																	)
-																}
-															/>
-														</div>
-													</div>
-													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
-														<div className="relative flex items-center">
-															<CheckBox
-																labelKey="Right Chest"
-																checked={
-																	customizePolos ===
-																	"Right Chest"
-																}
-																onChange={() =>
-																	handleCustomizePolosChange(
-																		"Right Chest"
-																	)
-																}
-															/>
-														</div>
-													</div>
-													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
-														<div className="relative flex items-center">
-															<CheckBox
-																labelKey="Embroidered"
-																checked={
-																	customizePolos ===
-																	"Embroidered"
-																}
-																onChange={() =>
-																	handleCustomizePolosChange(
-																		"Embroidered"
-																	)
-																}
-															/>
-														</div>
-													</div>
-												</div>
-											</div>
-
-											<div className="mr-10 mt-4">
-												<h3 className="text-base mt-3 md:text-lg text-heading font-semibold mb-2.5 capitalize">
-													Customize Basics
+													Customize
 												</h3>
 												<div className="flex flex-wrap">
 													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
@@ -1035,7 +965,7 @@ export default function ProductPage() {
 															/>
 														</div>
 													</div>
-													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
+													{/* <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
 														<div className="relative flex items-center">
 															<CheckBox
 																labelKey="Embroidered"
@@ -1050,7 +980,7 @@ export default function ProductPage() {
 																}
 															/>
 														</div>
-													</div>
+													</div> */}
 												</div>
 											</div>
 										</div>

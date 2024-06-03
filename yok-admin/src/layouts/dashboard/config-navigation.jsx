@@ -16,9 +16,12 @@ import LiveHelpTwoToneIcon from '@mui/icons-material/LiveHelpTwoTone';
 import ThumbUpTwoToneIcon from '@mui/icons-material/ThumbUpTwoTone';
 import ChecklistTwoToneIcon from '@mui/icons-material/ChecklistTwoTone';
 import SecurityTwoToneIcon from '@mui/icons-material/SecurityTwoTone';
+import SettingsBackupRestoreIcon from '@mui/icons-material/SettingsBackupRestore';
 import GroupsTwoToneIcon from '@mui/icons-material/GroupsTwoTone';
 import FilterBAndWTwoToneIcon from '@mui/icons-material/FilterBAndWTwoTone';
 import HandshakeTwoToneIcon from '@mui/icons-material/HandshakeTwoTone';
+import ColorLensIcon from '@mui/icons-material/ColorLens';
+import CheckroomIcon from '@mui/icons-material/Checkroom';
 
 // ----------------------------------------------------------------------
 
@@ -61,6 +64,16 @@ const navConfig = [
     title: 'Category',
     path: '/category',
     icon: <CategoryTwoToneIcon />,
+  },
+  {
+    title: 'Color',
+    path: '/color',
+    icon: <ColorLensIcon />,
+  },
+  {
+    title: 'Size',
+    path: '/variation',
+    icon: <CheckroomIcon />,
   },
   {
     title: 'Custom Product',
@@ -156,6 +169,11 @@ const navConfig = [
     title: 'Privacy Policy',
     path: '/privacy-policy',
     icon: <SecurityTwoToneIcon />,
+  },
+  {
+    title: 'Refund Policy',
+    path: '/refund-policy',
+    icon: <SettingsBackupRestoreIcon />,
   },
   {
     title: 'About Us',

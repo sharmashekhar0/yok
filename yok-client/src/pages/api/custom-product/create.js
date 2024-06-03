@@ -39,10 +39,13 @@ export default async function handler(req, res) {
 					category,
 					tags,
 					meta,
-					variations,
+					colors,
+					sizes,
 					gender,
 				} = req.body;
-				const variationsArray = JSON.parse(req.body.variations);
+
+				const sizeArray = JSON.parse(sizes);
+				const colorsArray = JSON.parse(colors);
 
 				const metaArray = JSON.parse(req.body.meta);
 
@@ -125,21 +128,8 @@ export default async function handler(req, res) {
 					brand,
 					category: JSON.parse(category),
 					tags: tags ? JSON.parse(tags) : [],
-					variations: variationsArray.map((value, index) => ({
-						id: index + 1,
-						value: value.value,
-						attribute: {
-							id: 1,
-							name:
-								value.attribute.name === "Color"
-									? "Color"
-									: "Size",
-							slug:
-								value.attribute.slug === "color"
-									? "color"
-									: "size",
-						},
-					})),
+					colors: colorsArray || [],
+					sizes: sizeArray || [],
 					meta: meta ? JSON.parse(meta) : [],
 					gender: gender ? JSON.parse(gender) : [],
 					image: { original: imageUrl, thumbnail: imageUrl, id: 1 },

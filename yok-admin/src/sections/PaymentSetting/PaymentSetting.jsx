@@ -9,14 +9,13 @@ import phonePayLogo from '../../../src/images/PhonePe-Logo.wine.png';
 import rogerpayLogo from '../../../src/images/Razorpay_logo.svg';
 import './PaymentSetting.css';
 import Switch from '@mui/material/Switch';
-import axios from 'axios';
 import { getPaymentGatewayKeys, createUpdateKeys } from 'src/api/api';
 import Swal from 'sweetalert2';
 
 const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
 export default function PaymentSetting() {
-  const [razorpay, setRazorpay] = useState(true);
+  const [razorpay, setRazorpay] = useState(false);
   const [phonePay, setPhonePay] = useState(false);
   const [razorpaySecret, setRazorpaySecret] = useState('');
   const [razorpayKey, setRazorpayKey] = useState('');
@@ -47,12 +46,8 @@ export default function PaymentSetting() {
         }
         if (activeGateway === 'razorpay') {
           setRazorpay(true);
-          setPhonePay(false);
-
         } else if (activeGateway === 'phonepe') {
           setPhonePay(true);
-          setRazorpay(false);
-
         }
       }
     } catch (error) {
@@ -62,25 +57,27 @@ export default function PaymentSetting() {
 
   const handleCreatePaymentKeys = async () => {
     try {
-      let requestBody = {};
+      // Prepare request body based on the selected gateways
+      const requestBody = {};
       if (razorpay) {
-        requestBody = {
+        requestBody.razorpay = {
           key: razorpayKey,
           secret: razorpaySecret,
-          activeGateway: 'razorpay',
-        };
-      } else if (phonePay) {
-        requestBody = {
-          merchantId: phonePeMerchantId,
-          secret: phonePeSecret,
-          activeGateway: 'phonepe',
         };
       }
+      if (phonePay) {
+        requestBody.phonepe = {
+          merchantId: phonePeMerchantId,
+          secret: phonePeSecret,
+        };
+      }
+
+      requestBody.activeGateway = razorpay ? 'razorpay' : phonePay ? 'phonepe' : null;
 
       console.log('requestBody', requestBody);
 
       // Call your API endpoint to store the payment keys
-      const response = await createUpdateKeys(requestBody)
+      const response = await createUpdateKeys(requestBody);
 
       console.log('Response from API:', response.data);
 
@@ -91,7 +88,6 @@ export default function PaymentSetting() {
           title: 'Success!',
           text: response.data.message,
           timer: 2000,
-
         });
       } else {
         // Show failure popup
@@ -100,14 +96,12 @@ export default function PaymentSetting() {
           title: 'Oops...',
           text: response.data.message,
           timer: 2000,
-
         });
       }
     } catch (error) {
       console.error('Error creating payment keys:', error);
     }
   };
-
 
   const handleChange = (e, name) => {
     let value = e.target.value;
@@ -122,13 +116,13 @@ export default function PaymentSetting() {
     }
   };
 
-  const handlePhonePayClick = () => {
-    setPhonePay(!phonePay);
+  // Toggle Razorpay state
+  const handleRazorpayClick = () => {
     setRazorpay(!razorpay);
   };
 
-  const handleRazorpayClick = () => {
-    setRazorpay(!razorpay);
+  // Toggle PhonePe state
+  const handlePhonePayClick = () => {
     setPhonePay(!phonePay);
   };
 
@@ -138,27 +132,44 @@ export default function PaymentSetting() {
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4">Payment Setting</Typography>
         </Stack>
+        <Typography variant="h5" style={{ color: 'red' }}>
+          Note: Activate any one payment gateway. Do not activate both together
+        </Typography>
         <div className="payment-options-yok">
           <div className="payment-option-single-yok">
-            <img width={'260px'} className="payment-option-image-yok" src={rogerpayLogo} />
+            <img
+              width={'260px'}
+              className="payment-option-image-yok"
+              src={rogerpayLogo}
+              alt="Razorpay"
+            />
             <div className="payment-option-toggle-btn-yok">
-              <Switch onChange={handlePhonePayClick} {...label} checked={razorpay} />
+              <Switch onChange={handleRazorpayClick} {...label} checked={razorpay} />
             </div>
           </div>
           <div className="payment-option-single-yok">
-            <img width={'260px'} className="payment-option-image-yok" src={phonePayLogo} />
+            <img
+              width={'260px'}
+              className="payment-option-image-yok"
+              src={phonePayLogo}
+              alt="PhonePe"
+            />
             <div className="payment-option-toggle-btn-yok">
-              <Switch onChange={handleRazorpayClick} {...label} checked={phonePay} />
+              <Switch onChange={handlePhonePayClick} {...label} checked={phonePay} />
             </div>
           </div>
         </div>
         <div className="create-product-details-product-name-image-ds">
           <div>
             {razorpay && (
-              <>
+              <div
+                style={{
+                  marginBottom: '20px',
+                }}
+              >
                 <TextField
                   className="create-product-input-box-two-yokk"
-                  style={{ height: '60px' }}
+                  style={{ height: '60px', marginBottom: '10px' }}
                   id="outlined-basic"
                   label="Razorpay Key"
                   variant="outlined"
@@ -174,13 +185,13 @@ export default function PaymentSetting() {
                   value={razorpaySecret}
                   onChange={(e) => handleChange(e, 'RazorpaySecret')}
                 />
-              </>
+              </div>
             )}
             {phonePay && (
-              <>
+              <div>
                 <TextField
                   className="create-product-input-box-two-yokk"
-                  style={{ height: '60px' }}
+                  style={{ height: '60px', marginBottom: '10px' }}
                   id="outlined-basic"
                   label="PhonePe Merchant ID"
                   variant="outlined"
@@ -196,7 +207,7 @@ export default function PaymentSetting() {
                   value={phonePeSecret}
                   onChange={(e) => handleChange(e, 'PhonePeSecret')}
                 />
-              </>
+              </div>
             )}
           </div>
           <div className="create-product-button-yok">
@@ -205,6 +216,8 @@ export default function PaymentSetting() {
               variant="contained"
               color="inherit"
               style={{ marginTop: '15px' }}
+              // Disable the button if no gateway is selected or both are selected
+              disabled={(!razorpay && !phonePay) || (razorpay && phonePay)}
             >
               Submit
             </Button>

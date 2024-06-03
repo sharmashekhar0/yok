@@ -1,7 +1,7 @@
 import TestimonialCard from "@components/common/testimonial-card";
 import SectionHeader from "@components/common/section-header";
 import Carousel from "@components/ui/carousel/carousel";
-// import { testimonials } from "@framework/static/testimonials";
+import { testimonials } from "@framework/static/testimonials";
 import { testimonialsTwo } from "@framework/static/testimonials-two";
 import { SwiperSlide } from "swiper/react";
 import { useEffect, useState } from "react";

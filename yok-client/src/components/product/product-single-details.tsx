@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Button from "@components/ui/button";
 import Counter from "@components/common/counter";
 import { useRouter } from "next/router";
+import cn from "classnames";
 import { useProductQuery } from "@framework/product/get-product";
 import { getVariations } from "@framework/utils/get-variations";
 import usePrice from "@framework/product/use-price";
@@ -55,6 +56,10 @@ const ProductSingleDetails: React.FC = () => {
 	const [data, setData] = useState(null);
 	const [quantity, setQuantity] = useState(1);
 	const [addToCartLoader, setAddToCartLoader] = useState<boolean>(false);
+	const [colors, setColors] = useState([]);
+	const [sizes, setSizes] = useState([]);
+	const [selectedColor, setSelectedColor] = useState(null);
+	const [selectedSize, setSelectedSize] = useState(null);
 	const { price, basePrice, discount } = usePrice(
 		data && {
 			amount: data.sale_price ? data.sale_price : data.price,
@@ -62,6 +67,16 @@ const ProductSingleDetails: React.FC = () => {
 			currencyCode: "INR",
 		}
 	);
+
+	const handleColorSelect = (color) => {
+		setSelectedColor(color.hexcode);
+	};
+
+	const handleSizeSelect = (size) => {
+		setSelectedSize(size.size);
+	};
+
+	const isSelected = selectedColor && selectedSize;
 
 	useEffect(() => {
 		if (!slug) {
@@ -75,6 +90,8 @@ const ProductSingleDetails: React.FC = () => {
 				console.log("response product hahj", response);
 				console.log("Product Response :: ", response?.data);
 				setData(response?.data);
+				setColors(response?.data?.colors);
+				setSizes(response?.data?.sizes);
 			} catch (error) {
 				console.log("error on get cart", error);
 			}
@@ -83,14 +100,14 @@ const ProductSingleDetails: React.FC = () => {
 	}, [slug]);
 
 	if (isLoading) return <p>Loading...</p>;
-	const variations = getVariations(data?.variations);
+	// const variations = getVariations(data?.variations);
 
-	const isSelected = !isEmpty(variations)
-		? !isEmpty(attributes) &&
-		  Object.keys(variations).every((variation) =>
-				attributes.hasOwnProperty(variation)
-		  )
-		: true;
+	// const isSelected = !isEmpty(variations)
+	// 	? !isEmpty(attributes) &&
+	// 	  Object.keys(variations).every((variation) =>
+	// 			attributes.hasOwnProperty(variation)
+	// 	  )
+	// 	: true;
 
 	async function addToCart() {
 		if (!isSelected) return;
@@ -121,8 +138,8 @@ const ProductSingleDetails: React.FC = () => {
 						price: item?.price,
 						quantity,
 						attributes: {
-							size: item?.attributes?.size,
-							color: item?.attributes?.color,
+							size: selectedColor,
+							color: selectedSize,
 						},
 						itemTotal: quantity * item.price,
 					}),
@@ -228,6 +245,63 @@ const ProductSingleDetails: React.FC = () => {
 				</div>
 
 				<div className="pb-3 border-b border-gray-300">
+					<h3 className="text-base md:text-lg text-heading font-semibold mb-2.5 capitalize">
+						Sizes
+					</h3>
+					<ul className="flex flex-wrap colors ltr:-mr-3 rtl:-ml-3">
+						{sizes?.map((s) => {
+							return (
+								<li
+									key={`${s?.size}-${s._id}`}
+									onClick={() => handleSizeSelect(s)}
+									className={cn(
+										"cursor-pointer rounded border w-9 md:w-11 h-9 md:h-11 p-1 mb-2 md:mb-3 ltr:mr-2 rtl:ml-2 ltr:md:mr-3 rtl:md:ml-3 flex justify-center items-center text-heading text-xs md:text-sm uppercase font-semibold transition duration-200 ease-in-out hover:border-black",
+										{
+											"border-black":
+												s.size === selectedSize,
+											"border-gray-100":
+												s.size !== selectedSize,
+										}
+									)}
+								>
+									<span className="w-full h-full rounded flex items-center justify-center">
+										{s.size}
+									</span>
+								</li>
+							);
+						})}
+					</ul>
+					<h3 className="text-base md:text-lg text-heading font-semibold mb-2.5 capitalize">
+						Colors
+					</h3>
+					<ul className="flex flex-wrap colors ltr:-mr-3 rtl:-ml-3">
+						{colors?.map((color) => {
+							return (
+								<li
+									key={`${color?.hexcode}-${color._id}`}
+									onClick={() => handleColorSelect(color)}
+									className={cn(
+										"cursor-pointer rounded border w-9 md:w-11 h-9 md:h-11 p-1 mb-2 md:mb-3 ltr:mr-2 rtl:ml-2 ltr:md:mr-3 rtl:md:ml-3 flex justify-center items-center text-heading text-xs md:text-sm uppercase font-semibold transition duration-200 ease-in-out hover:border-black",
+										{
+											"border-black":
+												color.hexcode === selectedColor,
+											"border-gray-100":
+												color.hexcode !== selectedColor,
+										}
+									)}
+								>
+									<span
+										className="block w-full h-full rounded"
+										style={{
+											backgroundColor: color?.hexcode,
+										}}
+									/>
+								</li>
+							);
+						})}
+					</ul>
+				</div>
+				{/* <div className="pb-3 border-b border-gray-300">
 					{Object.keys(variations).map((variation) => {
 						return (
 							<ProductAttributes
@@ -239,7 +313,7 @@ const ProductSingleDetails: React.FC = () => {
 							/>
 						);
 					})}
-				</div>
+				</div> */}
 				<div className="flex items-center gap-x-4 ltr:md:pr-32 rtl:md:pl-32 ltr:lg:pr-12 rtl:lg:pl-12 ltr:2xl:pr-32 rtl:2xl:pl-32 ltr:3xl:pr-48 rtl:3xl:pl-48  border-b border-gray-300 py-8">
 					<Counter
 						quantity={quantity}
@@ -269,16 +343,22 @@ const ProductSingleDetails: React.FC = () => {
 							</span>
 							{data?.sku}
 						</li>
-						<li>
+						<li className="flex">
 							<span className="font-semibold text-heading inline-block ltr:pr-2 rtl:pl-2">
 								Category:
 							</span>
-							<Link
-								href="/"
-								className="transition hover:underline hover:text-heading"
-							>
-								{data?.category?.name}
-							</Link>
+							<div className="flex gap-4">
+								{data?.category?.map((cat) => {
+									return (
+										<Link
+											href="/"
+											className="transition hover:underline hover:text-heading"
+										>
+											{cat}
+										</Link>
+									);
+								})}
+							</div>
 						</li>
 						{data?.tags && Array.isArray(data.tags) && (
 							<li className="productTags">
@@ -306,147 +386,3 @@ const ProductSingleDetails: React.FC = () => {
 };
 
 export default ProductSingleDetails;
-
-{
-	/* <div className="block lg:grid grid-cols-9 gap-x-10 xl:gap-x-14 pt-7 pb-10 lg:pb-14 2xl:pb-20 items-start">
-      {width < 1025 ? (
-        <Carousel
-          pagination={{
-            clickable: true,
-          }}
-          breakpoints={productGalleryCarouselResponsive}
-          className="product-gallery"
-          buttonGroupClassName="hidden"
-        >
-          {data?.gallery?.map((item, index: number) => (
-            <SwiperSlide key={`product-gallery-key-${index}`}>
-              <div className="col-span-1 transition duration-150 ease-in hover:opacity-90">
-                <img
-                  src={
-                    item?.original ??
-                    "/assets/placeholder/products/product-gallery.svg"
-                  }
-                  alt={`${data?.name}--${index}`}
-                  className="object-cover w-full"
-                />
-              </div>
-            </SwiperSlide>
-          ))}
-        </Carousel>
-      ) : (
-        <div className="col-span-5 grid grid-cols-2 gap-2.5">
-          {data?.gallery?.map((item, index: number) => (
-            <div
-              key={index}
-              className="col-span-1 transition duration-150 ease-in hover:opacity-90"
-            >
-              <img
-                src={
-                  item?.original ??
-                  "/assets/placeholder/products/product-gallery.svg"
-                }
-                alt={`${data?.name}--${index}`}
-                className="object-cover w-full"
-              />
-            </div>
-          ))}
-        </div>
-      )}
-
-      <div className="col-span-4 pt-8 lg:pt-0">
-        <div className="pb-7 mb-7 border-b border-gray-300">
-          <h2 className="text-heading text-lg md:text-xl lg:text-2xl 2xl:text-3xl font-bold hover:text-black mb-3.5">
-            {data?.name}
-          </h2>
-          <p className="text-body text-sm lg:text-base leading-6 lg:leading-8">
-            {data?.description}
-          </p>
-          <div className="flex items-center mt-5">
-            <div className="text-heading font-bold text-base md:text-xl lg:text-2xl 2xl:text-4xl ltr:pr-2 rtl:pl-2 ltr:md:pr-0 rtl:md:pl-0 ltr:lg:pr-2 rtl:lg:pl-2 ltr:2xl:pr-0 rtl:2xl:pl-0">
-              {price}
-            </div>
-            {discount && (
-              <span className="line-through font-segoe text-gray-400 text-sm md:text-base lg:text-lg xl:text-xl ltr:pl-2 rtl:pr-2">
-                {basePrice}
-              </span>
-            )}
-          </div>
-        </div>
-
-        <div className="pb-3 border-b border-gray-300">
-          {Object.keys(variations).map((variation) => {
-            return (
-              <ProductAttributes
-                key={variation}
-                title={variation}
-                attributes={variations[variation]}
-                active={attributes[variation]}
-                onClick={handleAttribute}
-              />
-            );
-          })}
-        </div>
-        <div className="flex items-center gap-x-4 ltr:md:pr-32 rtl:md:pl-32 ltr:lg:pr-12 rtl:lg:pl-12 ltr:2xl:pr-32 rtl:2xl:pl-32 ltr:3xl:pr-48 rtl:3xl:pl-48  border-b border-gray-300 py-8">
-          <Counter
-            quantity={quantity}
-            onIncrement={() => setQuantity((prev) => prev + 1)}
-            onDecrement={() =>
-              setQuantity((prev) => (prev !== 1 ? prev - 1 : 1))
-            }
-            disableDecrement={quantity === 1}
-          />
-          <Button
-            onClick={addToCart}
-            variant="slim"
-            className={`w-full md:w-6/12 xl:w-full ${
-              !isSelected && "bg-gray-400 hover:bg-gray-400"
-            }`}
-            disabled={!isSelected}
-            loading={addToCartLoader}
-          >
-            <span className="py-2 3xl:px-8">Add to cart</span>
-          </Button>
-        </div>
-        <div className="py-6">
-          <ul className="text-sm space-y-5 pb-1">
-            <li>
-              <span className="font-semibold text-heading inline-block ltr:pr-2 rtl:pl-2">
-                SKU:
-              </span>
-              {data?.sku}
-            </li>
-            <li>
-              <span className="font-semibold text-heading inline-block ltr:pr-2 rtl:pl-2">
-                Category:
-              </span>
-              <Link
-                href="/"
-                className="transition hover:underline hover:text-heading"
-              >
-                {data?.category?.name}
-              </Link>
-            </li>
-            {data?.tags && Array.isArray(data.tags) && (
-              <li className="productTags">
-                <span className="font-semibold text-heading inline-block ltr:pr-2 rtl:pl-2">
-                  Tags:
-                </span>
-                {data.tags.map((tag) => (
-                  <Link
-                    key={tag.id}
-                    href={tag.slug}
-                    className="inline-block ltr:pr-1.5 rtl:pl-1.5 transition hover:underline hover:text-heading ltr:last:pr-0 rtl:last:pl-0"
-                  >
-                    {tag.name}
-                    <span className="text-heading">,</span>
-                  </Link>
-                ))}
-              </li>
-            )}
-          </ul>
-        </div>
-
-        <ProductMetaReview data={data} />
-      </div>
-    </div> */
-}

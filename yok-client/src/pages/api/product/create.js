@@ -36,14 +36,19 @@ export default async function handler(req, res) {
 					brand,
 					sale_price,
 					type,
+					colors,
 					quantity,
 					category,
 					tags,
 					meta,
-					variations,
+					sizes,
 					gender,
 				} = req.body;
-				const variationsArray = JSON.parse(req.body.variations);
+				const sizeArray = JSON.parse(sizes);
+				const colorsArray = JSON.parse(colors);
+
+				console.log("Size Array :: ", sizes);
+				console.log("Color Array :: ", colors);
 
 				const metaArray = JSON.parse(req.body.meta);
 
@@ -113,7 +118,6 @@ export default async function handler(req, res) {
 					uploadGalleryImages(),
 				]);
 
-				console.log("Category :: ", typeof category);
 				// Create a new Product document
 				const product = new Product({
 					name,
@@ -126,21 +130,8 @@ export default async function handler(req, res) {
 					brand,
 					category: JSON.parse(category),
 					tags: tags ? JSON.parse(tags) : [],
-					variations: variationsArray.map((value, index) => ({
-						id: index + 1,
-						value: value.value,
-						attribute: {
-							id: 1,
-							name:
-								value.attribute.name === "Color"
-									? "Color"
-									: "Size",
-							slug:
-								value.attribute.slug === "color"
-									? "color"
-									: "size",
-						},
-					})),
+					colors: colorsArray || [],
+					sizes: sizeArray || [],
 					meta: meta ? JSON.parse(meta) : [],
 					gender: gender ? JSON.parse(gender) : [],
 					image: { original: imageUrl, thumbnail: imageUrl, id: 1 },

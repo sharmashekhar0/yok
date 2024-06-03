@@ -10,7 +10,7 @@ type PaginatedProduct = {
 };
 
 const fetchProducts = async () => {
-	const { data } = await http.get(API_ENDPOINTS.PRODUCTS);
+	const { data } = await http.get(API_ENDPOINTS.CUSTOMPRODUCTS);
 	return {
 		data: shuffle(data),
 		paginatorInfo: {
@@ -21,7 +21,7 @@ const fetchProducts = async () => {
 
 const useProductsQuery = (options: QueryOptionsType) => {
 	const result = useInfiniteQuery<PaginatedProduct, Error>({
-		queryKey: [API_ENDPOINTS.PRODUCTS, {}] || [],
+		queryKey: [API_ENDPOINTS.CUSTOMPRODUCTS, {}] || [],
 		queryFn: fetchProducts,
 		initialPageParam: 0,
 		getNextPageParam: ({ paginatorInfo }) => paginatorInfo?.nextPageUrl,

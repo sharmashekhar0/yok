@@ -1,7 +1,7 @@
 // lib/cors.js
 
 export default function corsMiddleware(req, res, next) {
-	const allowedOrigin = "http://3.110.207.87";
+	const allowedOrigin = "*";
 
 	// Check if the header is already set
 	if (!res.headersSent) {

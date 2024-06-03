@@ -41,9 +41,14 @@ const colorsValue = ['Red', 'Green', 'Orange'];
 
 const ViewProduct = ({ clickedProduct }) => {
   const navigate = useNavigate();
-  const [tags, setTags] = React.useState([]);
-  const [color, setColor] = React.useState([]);
-  const [variations, setVariations] = React.useState([]);
+  const [brand, setBrand] = useState('');
+  const [brands, setBrands] = useState([]);
+  const [selectedColors, setSelectedColors] = useState([]);
+  const [variations, setVariations] = useState([]);
+  const [tagsList, setTagsList] = useState([]);
+  const [tag, setTag] = useState('');
+  const [categories, setCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   const [productData, setProductData] = useState({
     name: '',
@@ -63,10 +68,6 @@ const ViewProduct = ({ clickedProduct }) => {
     type: 'Normal',
   });
 
-  console.log('tags', tags);
-  console.log('productData', productData);
-  console.log('variations', variations);
-
   const handleTagChange = (name, event) => {
     const {
       target: { value },
@@ -75,49 +76,49 @@ const ViewProduct = ({ clickedProduct }) => {
     let newVariations = [];
     let existingVariations = [];
 
-    if (name === 'tags') {
-      setTags(typeof value === 'string' ? value.split(',') : value);
-    }
-    if (name === 'colors') {
-      setColor(typeof value === 'string' ? value.split(',') : value);
+    // if (name === 'tags') {
+    //   setTags(typeof value === 'string' ? value.split(',') : value);
+    // }
+    // if (name === 'colors') {
+    //   setColor(typeof value === 'string' ? value.split(',') : value);
 
-      newVariations = value.map((color) => ({
-        id: variationsValue.length + 1,
-        value: color,
-        attribute: {
-          id: 1,
-          name: 'Color',
-          slug: 'color',
-        },
-      }));
-      // Filter out existing variations that are not colors
-      existingVariations = productData.variations.filter(
-        (variation) => variation.attribute.slug !== 'color'
-      );
-    }
-    if (name === 'variations') {
-      setVariations(typeof value === 'string' ? value.split(',') : value);
-      let shortForms = {
-        'Extra Small': 'XS',
-        Small: 'S',
-        Medium: 'M',
-        Large: 'L',
-        'Extra Large': 'XL',
-      };
-      newVariations = value.map((size) => ({
-        id: variationsValue.length + 1,
-        value: shortForms[size],
-        attribute: {
-          id: 1,
-          name: 'Size',
-          slug: 'size',
-        },
-      }));
-      // Filter out existing variations that are not sizes
-      existingVariations = productData.variations.filter(
-        (variation) => variation.attribute.slug !== 'size'
-      );
-    }
+    //   newVariations = value.map((color) => ({
+    //     id: variationsValue.length + 1,
+    //     value: color,
+    //     attribute: {
+    //       id: 1,
+    //       name: 'Color',
+    //       slug: 'color',
+    //     },
+    //   }));
+    //   // Filter out existing variations that are not colors
+    //   existingVariations = productData.variations.filter(
+    //     (variation) => variation.attribute.slug !== 'color'
+    //   );
+    // }
+    // if (name === 'variations') {
+    //   setVariations(typeof value === 'string' ? value.split(',') : value);
+    //   let shortForms = {
+    //     'Extra Small': 'XS',
+    //     Small: 'S',
+    //     Medium: 'M',
+    //     Large: 'L',
+    //     'Extra Large': 'XL',
+    //   };
+    //   newVariations = value.map((size) => ({
+    //     id: variationsValue.length + 1,
+    //     value: shortForms[size],
+    //     attribute: {
+    //       id: 1,
+    //       name: 'Size',
+    //       slug: 'size',
+    //     },
+    //   }));
+    //   // Filter out existing variations that are not sizes
+    //   existingVariations = productData.variations.filter(
+    //     (variation) => variation.attribute.slug !== 'size'
+    //   );
+    // }
 
     // Combine existing variations with new variations
     const updatedVariations = [...existingVariations, ...newVariations];
@@ -127,6 +128,28 @@ const ViewProduct = ({ clickedProduct }) => {
       ...prevData,
       variations: updatedVariations,
     }));
+  };
+
+  const handleTagsInputChange = (event) => {
+    setTag(event.target.value);
+  };
+
+  const handleTagsEnter = (event) => {
+    if (event.key === 'Enter') {
+      addItemToList();
+    }
+  };
+
+  const addItemToList = () => {
+    if (tag.trim() !== '') {
+      const newTag = {
+        id: tagsList.length + 1, // Incrementing ID
+        name: tag.trim(),
+        slug: tag.trim().toLowerCase().replace(/\s+/g, '-'), // Converting to slug format
+      };
+      setTagsList([...tagsList, newTag]);
+      setTag('');
+    }
   };
 
   const handleChange = (event) => {
@@ -213,33 +236,11 @@ const ViewProduct = ({ clickedProduct }) => {
   };
 
   useEffect(() => {
-    setColor(
-      clickedProduct?.variations
-        .map((color) => {
-          if (color.attribute.name === 'Color') {
-            return color.value;
-          }
-        })
-        .filter((color) => color !== undefined)
-    );
-
-    let shortForms = {
-      XS: 'Extra Small',
-      S: 'Small',
-      M: 'Medium',
-      L: 'Large',
-      XL: 'Extra Large',
-    };
-
-    setVariations(
-      clickedProduct?.variations
-        .map((color) => {
-          if (color.attribute.name === 'Size') {
-            return shortForms[color.value];
-          }
-        })
-        .filter((color) => color !== undefined)
-    );
+    setSelectedColors(clickedProduct?.colors);
+    setVariations(clickedProduct?.sizes);
+    setSelectedCategories(clickedProduct.category || []);
+    setBrand(clickedProduct.brand);
+    setTagsList(clickedProduct.tags);
     if (clickedProduct) {
       const updatedProductData = {
         ...productData,
@@ -280,6 +281,29 @@ const ViewProduct = ({ clickedProduct }) => {
               disabled
             />
           </div>
+          <div className="mt-4">
+            <FormControl fullWidth>
+              <TextField
+                className="create-product-input-box-two-yok"
+                id="outlined-basic"
+                label="Tags"
+                variant="outlined"
+                name="name"
+                value={tag}
+                disabled
+                onChange={handleTagsInputChange}
+                onKeyDown={handleTagsEnter}
+              />
+              <div className="mt-1" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                {tagsList &&
+                  tagsList.map((tag, index) => (
+                    <span key={index} className="mx-1">
+                      #{tag.name}
+                    </span>
+                  ))}
+              </div>
+            </FormControl>
+          </div>
 
           {/* <div className="mt-4">
             <FormControl fullWidth>
@@ -303,6 +327,30 @@ const ViewProduct = ({ clickedProduct }) => {
               </Select>
             </FormControl>
           </div> */}
+
+          <div className="mt-4">
+            <FormControl fullWidth>
+              <InputLabel id="demo-multiple-checkbox-label">Brand</InputLabel>
+              <Select
+                labelId="demo-multiple-checkbox-label"
+                id="color-multiple-checkbox"
+                value={brand}
+                onChange={(event) => setBrand(event.target.value)}
+                input={<OutlinedInput label="Brands" />}
+                renderValue={() => brand}
+                disabled
+                MenuProps={MenuProps}
+              >
+                {
+                  <MenuItem key={brand} value={brand}>
+                    <Checkbox checked={brand === brand} />
+                    <ListItemText primary={brand} />
+                  </MenuItem>
+                }
+              </Select>
+            </FormControl>
+          </div>
+
           <div className="mt-4">
             <textarea
               style={{ height: '80px' }}
@@ -430,17 +478,16 @@ const ViewProduct = ({ clickedProduct }) => {
                 labelId="demo-multiple-checkbox-label"
                 id="color-multiple-checkbox"
                 multiple
-                value={color}
+                value={selectedColors}
                 onChange={(event) => handleTagChange('colors', event)}
                 input={<OutlinedInput label="Colors" />}
-                renderValue={(selected) => selected.join(', ')}
+                renderValue={(selected) => selected.map((item) => item.name).join(', ')}
                 MenuProps={MenuProps}
-                disabled
               >
-                {colorsValue.map((name) => (
-                  <MenuItem key={name} value={name}>
-                    <Checkbox checked={color.indexOf(name) > -1} />
-                    <ListItemText primary={name} />
+                {selectedColors.map((color) => (
+                  <MenuItem key={color._id} value={color.name}>
+                    <Checkbox checked={true} />
+                    <ListItemText primary={color.name} />
                   </MenuItem>
                 ))}
               </Select>
@@ -449,22 +496,20 @@ const ViewProduct = ({ clickedProduct }) => {
 
           <div className="mt-4">
             <FormControl fullWidth>
-              <InputLabel id="demo-multiple-checkbox-label">Variations</InputLabel>
+              <InputLabel id="demo-multiple-checkbox-label">Sizes</InputLabel>
               <Select
                 labelId="demo-multiple-checkbox-label"
                 id="demo-multiple-checkbox"
                 multiple
                 value={variations}
-                onChange={(event) => handleTagChange('variations', event)}
-                input={<OutlinedInput label="Variations" />}
-                renderValue={(selected) => selected.join(', ')}
-                MenuProps={MenuProps}
-                disabled
+                // onChange={(event) => handleTagChange('variations', event)}
+                input={<OutlinedInput label="Sizes" />}
+                renderValue={(selected) => selected.map((item) => item.size).join(', ')}
               >
-                {variationsValue.map((name) => (
-                  <MenuItem key={name} value={name}>
-                    <Checkbox checked={variations.indexOf(name) > -1} />
-                    <ListItemText primary={name} />
+                {variations.map((variation) => (
+                  <MenuItem key={variation._id} value={variation.size}>
+                    <Checkbox checked={1} />
+                    <ListItemText primary={variation.size} />
                   </MenuItem>
                 ))}
               </Select>
@@ -474,26 +519,18 @@ const ViewProduct = ({ clickedProduct }) => {
           <div className="mt-4">
             <p>Category</p>
             <div className="flex">
-              <FormControlLabel
-                control={<Checkbox />}
-                label="Male"
-                name="Male"
-                checked={productData.gender.includes('Male')}
-                // category
-              />
-              <FormControlLabel
-                control={<Checkbox />}
-                label="Women"
-                name="Women"
-                checked={productData.gender.includes('Women')}
-              />
-              <FormControlLabel
-                control={<Checkbox />}
-                label="Kids"
-                name="Kids"
-                checked={productData.gender.includes('Kids')}
-              />
+              {selectedCategories.map((cat) => (
+                <FormControlLabel
+                  key={cat}
+                  control={<Checkbox />}
+                  label={cat}
+                  name={cat}
+                  checked={true} // Check if the category is selected
+                  // onChange={handleCategoryCheckboxChange}
+                />
+              ))}
             </div>
+            {/* Display error message if any */}
           </div>
 
           <div className="mt-4">

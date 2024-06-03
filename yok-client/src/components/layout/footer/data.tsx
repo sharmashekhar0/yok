@@ -118,7 +118,7 @@ export const footer = {
 				{
 					id: 3,
 					title: "link-return-policy",
-					path: "/privacy",
+					path: "/refund-policy",
 				},
 				{
 					id: 4,
@@ -348,7 +348,7 @@ export const footerContemporary = {
 				{
 					id: 3,
 					title: "link-return-policy",
-					path: "/privacy",
+					path: "/refund-policy",
 				},
 				{
 					id: 4,

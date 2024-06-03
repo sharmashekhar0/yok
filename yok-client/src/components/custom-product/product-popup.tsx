@@ -176,7 +176,7 @@ export default function ProductPopup() {
 					})}
 
 					<div className="pt-2 md:pt-4">
-						<div className="flex items-center justify-between mb-4 gap-x-3 sm:gap-x-4">
+						{/* <div className="flex items-center justify-between mb-4 gap-x-3 sm:gap-x-4">
 							<Counter
 								quantity={quantity}
 								onIncrement={() =>
@@ -201,23 +201,23 @@ export default function ProductPopup() {
 							>
 								{t("text-add-to-cart")}
 							</Button>
-						</div>
+						</div> */}
 
-						{viewCartBtn && (
+						{/* {viewCartBtn && (
 							<button
 								onClick={navigateToCartPage}
 								className="w-full mb-4 h-11 md:h-12 rounded bg-gray-100 text-heading focus:outline-none border border-gray-300 transition-colors hover:bg-gray-50 focus:bg-gray-50"
 							>
 								{t("text-view-cart")}
 							</button>
-						)}
+						)} */}
 
 						<Button
 							onClick={navigateToProductPage}
 							variant="flat"
 							className="w-full h-11 md:h-12"
 						>
-							{t("text-view-details")}
+							{"Customize Product"}
 						</Button>
 					</div>
 				</div>

@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React, { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
 
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -16,11 +17,12 @@ import {
   TextField,
 } from '@mui/material';
 
-import { editCustomProductAPI, getAllBrands, getAllCategory } from 'src/api/api';
+import { editCustomProductAPI, getAllColor, getAllVariation } from 'src/api/api';
 
 import OutlinedInput from '@mui/material/OutlinedInput';
 import ListItemText from '@mui/material/ListItemText';
 import { useNavigate } from 'react-router-dom';
+import { createCustomProductAPI, getAllBrands, getAllCategory } from 'src/api/api';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -33,28 +35,48 @@ const MenuProps = {
   },
 };
 
-const tagsValue = ['Casual', 'Cotton'];
-
-const variationsValue = ['Extra Small', 'Small', 'Medium', 'Large', 'Extra Large', '2XL', '3XL'];
+const variationsValue = ['Small', 'Medium', 'Large', 'Extra Large'];
 
 const colorsValue = ['Red', 'Green', 'Orange'];
 
 const EditCustomProduct = ({ clickedProduct }) => {
   const navigate = useNavigate();
   const [tags, setTags] = React.useState([]);
-  const [color, setColor] = React.useState([]);
-  const [variations, setVariations] = React.useState([]);
+  const [colors, setColors] = useState([]);
+  const [selectedColors, setSelectedColors] = useState([]);
+  const [variations, setVariations] = useState([]);
+  const [variationOptions, setVariationOptions] = useState([]);
   const [tagsList, setTagsList] = useState([]);
   const [tag, setTag] = useState('');
+  const [brands, setBrands] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [brand, setBrand] = useState('');
-  const [brands, setBrands] = useState([]);
 
   const getBrandsHandler = async () => {
     try {
       const response = await getAllBrands();
       setBrands(response.brands);
+    } catch (error) {
+      console.log('Error while getting brands :: ', error);
+    }
+  };
+
+  const getColorsHandler = async () => {
+    try {
+      const response = await getAllColor();
+      setColors(response?.data?.colors);
+      console.log('Colors :: ', response?.data?.colors);
+    } catch (error) {
+      console.log('Error while getting brands :: ', error);
+    }
+  };
+
+  const getVariationsHandler = async () => {
+    try {
+      const response = await getAllVariation();
+      console.log('Variations :: ', response?.data?.variations);
+      setVariationOptions(response?.data?.variations);
     } catch (error) {
       console.log('Error while getting brands :: ', error);
     }
@@ -73,6 +95,8 @@ const EditCustomProduct = ({ clickedProduct }) => {
   useEffect(() => {
     getBrandsHandler();
     getCategoriesHandler();
+    getColorsHandler();
+    getVariationsHandler();
   }, []);
 
   const [productData, setProductData] = useState({
@@ -83,8 +107,9 @@ const EditCustomProduct = ({ clickedProduct }) => {
     price: '',
     sale_price: '',
     quantity: '',
-    category: { id: 1, name: 'kids', slug: 'kids' },
+    category: [],
     tags: [],
+    brand: '',
     image: null,
     gallery: [],
     variations: [],
@@ -93,56 +118,57 @@ const EditCustomProduct = ({ clickedProduct }) => {
     type: 'Normal',
   });
 
+  const [errors, setErrors] = useState({
+    name: '',
+    slug: '',
+    sku: 'N/A',
+    description: '',
+    price: '',
+    sale_price: '',
+    quantity: '',
+    category: [],
+    tags: [],
+    brand: '',
+    image: null,
+    gallery: [],
+    variations: [],
+    meta: [],
+    gender: [],
+    type: 'Normal',
+  });
+
+  const handleCategoryCheckboxChange = (event) => {
+    const { name, checked } = event.target;
+    console.log('Name :: ', name);
+    console.log('Checked :: ', checked);
+
+    if (checked) {
+      // If checkbox is checked, add category to selectedCategories
+      setSelectedCategories([...selectedCategories, name]);
+    } else {
+      // If checkbox is unchecked, remove category from selectedCategories
+      setSelectedCategories(selectedCategories.filter((cat) => cat !== name));
+    }
+  };
+
   const handleTagChange = (name, event) => {
     const {
       target: { value },
     } = event;
 
+    const updatedErrors = { ...errors };
     let newVariations = [];
     let existingVariations = [];
 
     if (name === 'tags') {
       setTags(typeof value === 'string' ? value.split(',') : value);
+      updatedErrors[name] = '';
     }
     if (name === 'colors') {
-      setColor(typeof value === 'string' ? value.split(',') : value);
-
-      newVariations = value.map((color) => ({
-        id: variationsValue.length + 1,
-        value: color,
-        attribute: {
-          id: 1,
-          name: 'Color',
-          slug: 'color',
-        },
-      }));
-      // Filter out existing variations that are not colors
-      existingVariations = productData.variations.filter(
-        (variation) => variation.attribute.slug !== 'color'
-      );
+      setSelectedColors(value);
     }
     if (name === 'variations') {
-      setVariations(typeof value === 'string' ? value.split(',') : value);
-      let shortForms = {
-        'Extra Small': 'XS',
-        Small: 'S',
-        Medium: 'M',
-        Large: 'L',
-        'Extra Large': 'XL',
-      };
-      newVariations = value.map((size) => ({
-        id: variationsValue.length + 1,
-        value: shortForms[size],
-        attribute: {
-          id: 1,
-          name: 'Size',
-          slug: 'size',
-        },
-      }));
-      // Filter out existing variations that are not sizes
-      existingVariations = productData.variations.filter(
-        (variation) => variation.attribute.slug !== 'size'
-      );
+      setVariations(value);
     }
 
     // Combine existing variations with new variations
@@ -153,16 +179,7 @@ const EditCustomProduct = ({ clickedProduct }) => {
       ...prevData,
       variations: updatedVariations,
     }));
-  };
-
-  const handleTagsInputChange = (event) => {
-    setTag(event.target.value);
-  };
-
-  const handleTagsEnter = (event) => {
-    if (event.key === 'Enter') {
-      addItemToList();
-    }
+    setErrors(updatedErrors);
   };
 
   const handleChange = (event) => {
@@ -171,6 +188,9 @@ const EditCustomProduct = ({ clickedProduct }) => {
       ...prevData,
       [name]: name === 'customizable' ? checked : value,
     }));
+    const updatedErrors = { ...errors };
+    updatedErrors[name] = '';
+    setErrors(updatedErrors);
   };
 
   const handleRadioChange = (event) => {
@@ -180,23 +200,31 @@ const EditCustomProduct = ({ clickedProduct }) => {
       ...prevData,
       [name]: value,
     }));
+    const updatedErrors = { ...errors };
+    updatedErrors[name] = '';
+    setErrors(updatedErrors);
   };
 
   const handleInputChange = (event) => {
     const { name, value, files } = event.target;
     let updatedMetaData = [...productData.meta];
+    const updatedErrors = { ...errors };
+    updatedErrors[name] = '';
+
     if (files) {
       if (name === 'image') {
         setProductData((prevState) => ({
           ...prevState,
           image: files[0],
         }));
+        updatedErrors[name] = '';
       } else if (name === 'gallery') {
         const selectedFiles = Array.from(files).slice(0, 10);
         setProductData((prevState) => ({
           ...prevState,
           gallery: selectedFiles,
         }));
+        updatedErrors[name] = '';
       }
     } else if (
       name === 'Product Details' ||
@@ -214,7 +242,7 @@ const EditCustomProduct = ({ clickedProduct }) => {
         };
       } else {
         updatedMetaData.push({
-          id: productData.meta.length + 1,
+          id: productData.meta.length + 1, // Increment the ID
           title: name,
           content: value,
         });
@@ -230,31 +258,103 @@ const EditCustomProduct = ({ clickedProduct }) => {
         ...prevState,
         [name]: value,
       }));
+      updatedErrors[name] = '';
     }
+    setErrors(updatedErrors);
   };
 
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
+    const updatedErrors = { ...errors };
     if (checked) {
       setProductData({
         ...productData,
         gender: [...productData.gender, name],
       });
+      updatedErrors[name] = '';
     } else {
       setProductData({
         ...productData,
         gender: productData.gender.filter((gender) => gender !== name),
       });
+      updatedErrors[name] = '';
     }
+    setErrors(updatedErrors);
   };
+
+  function removePropertiesFromArray(arr, propertiesToRemove) {
+    return arr.map((obj) => {
+      const newObj = { ...obj };
+      propertiesToRemove.forEach((property) => delete newObj[property]);
+      return newObj;
+    });
+  }
 
   const handleCreateProduct = async () => {
     try {
+      const updatedErrors = {};
+
+      if (!productData.name) {
+        updatedErrors.name = 'Name is required';
+      }
+      // if (!productData.slug) {
+      //   updatedErrors.slug = 'Slug is required';
+      // }
+      if (!productData.image) {
+        updatedErrors.image = 'Image is required';
+      }
+      // if (!productData.sku) {
+      //   updatedErrors.sku = 'Sku is required';
+      // }
+      if (!productData.description) {
+        updatedErrors.description = 'Description is required';
+      }
+      if (!productData.price) {
+        updatedErrors.price = 'Price is required';
+      }
+      if (!productData.sale_price) {
+        updatedErrors.sale_price = 'Sale price is required';
+      }
+      if (!productData.quantity) {
+        updatedErrors.quantity = 'Quantity is required';
+      }
+      // if (!productData.gender) {
+      //   updatedErrors.gender = 'Gender is required';
+      // }
+      if (!productData.variations) {
+        updatedErrors.variations = 'Variations is required';
+      }
+      // if (!productData.meta) {
+      //   updatedErrors.meta = 'Meta is required';
+      // }
+      // if (!productData.category) {
+      //   updatedErrors.category = 'Category is required';
+      // }
+      // if (!productData.tags) {
+      //   updatedErrors.tags = 'Tag is required';
+      // }
+      // if (!productData.type) {
+      //   updatedErrors.types = 'Types is required';
+      // }
+
+      if (Object.keys(updatedErrors).length > 0) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ...updatedErrors,
+        }));
+        return;
+      }
+
+      const colors =
+        removePropertiesFromArray(selectedColors, ['_id', 'createdAt', 'updatedAt', '__v']) || [];
+
+      const sizes = variations?.map((size) => {
+        return { size };
+      });
+
       const formData = new FormData();
-      formData.append('productId', clickedProduct._id);
       formData.append('image', productData.image);
       formData.append('name', productData.name);
-      formData.append('brand', brand);
       formData.append('slug', productData.slug);
       formData.append('sku', productData.sku);
       formData.append('description', productData.description);
@@ -263,8 +363,10 @@ const EditCustomProduct = ({ clickedProduct }) => {
       formData.append('quantity', productData.quantity);
       formData.append('category', JSON.stringify(selectedCategories));
       formData.append('tags', JSON.stringify(tagsList));
+      formData.append('brand', brand);
       formData.append('gender', JSON.stringify(productData.gender));
-      formData.append('variations', JSON.stringify(productData.variations));
+      formData.append('colors', JSON.stringify(colors));
+      formData.append('sizes', JSON.stringify(sizes));
       formData.append('meta', JSON.stringify(productData.meta));
       formData.append('type', productData.type);
 
@@ -272,79 +374,51 @@ const EditCustomProduct = ({ clickedProduct }) => {
         formData.append(`gallery`, image);
       });
 
+      console.log('Selected Categories :: ', selectedCategories);
+
       const response = await editCustomProductAPI(formData);
-      console.log('Custom Product created successfully:', response);
-      if (response) {
-        navigate('/custom-product');
-      }
+      console.log('Product created successfully:', response);
+      // if (response) {
+      //   navigate('/products');
+      // }
+      Swal.fire({
+        position: 'center',
+        icon: 'success',
+        title: 'Product has been created',
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      setProductData({
+        name: '',
+        slug: '',
+        sku: 'N/A',
+        description: '',
+        price: '',
+        sale_price: '',
+        quantity: '',
+        category: { id: 1, name: 'kids', slug: 'kids' },
+        tags: [],
+        image: null,
+        gallery: [],
+        variations: [],
+        meta: [],
+        gender: [],
+        type: 'Normal',
+      });
     } catch (error) {
       console.error('Error creating product:', error);
     }
   };
 
-  const handleCategoryCheckboxChange = (event) => {
-    const { name, checked } = event.target;
-    console.log('Name :: ', name);
-    console.log('Checked :: ', checked);
-
-    if (checked) {
-      // If checkbox is checked, add category to selectedCategories
-      setSelectedCategories([...selectedCategories, name]);
-    } else {
-      // If checkbox is unchecked, remove category from selectedCategories
-      setSelectedCategories(selectedCategories.filter((cat) => cat !== name));
-    }
+  const handleTagsInputChange = (event) => {
+    setTag(event.target.value);
   };
 
-  useEffect(() => {
-    setColor(
-      clickedProduct?.variations
-        .map((color) => {
-          if (color.attribute.name === 'Color') {
-            return color.value;
-          }
-        })
-        .filter((color) => color !== undefined)
-    );
-
-    let shortForms = {
-      XS: 'Extra Small',
-      S: 'Small',
-      M: 'Medium',
-      L: 'Large',
-      XL: 'Extra Large',
-    };
-
-    setVariations(
-      clickedProduct?.variations
-        .map((color) => {
-          if (color.attribute.name === 'Size') {
-            return shortForms[color.value];
-          }
-        })
-        .filter((color) => color !== undefined)
-    );
-    if (clickedProduct) {
-      const updatedProductData = {
-        ...productData,
-        name: clickedProduct?.name,
-        description: clickedProduct?.description,
-        image: clickedProduct?.image?.original,
-        gallery: clickedProduct?.gallery.map((image) => image?.original),
-        price: clickedProduct?.price,
-        sale_price: clickedProduct?.sale_price,
-        quantity: clickedProduct?.quantity,
-        type: clickedProduct?.type,
-        meta: clickedProduct?.meta,
-      };
-
-      setTagsList(clickedProduct.tags);
-      setBrand(clickedProduct.brand);
-      setSelectedCategories(clickedProduct.category);
-
-      setProductData(updatedProductData);
+  const handleTagsEnter = (event) => {
+    if (event.key === 'Enter') {
+      addItemToList();
     }
-  }, [clickedProduct]);
+  };
 
   const addItemToList = () => {
     if (tag.trim() !== '') {
@@ -358,10 +432,39 @@ const EditCustomProduct = ({ clickedProduct }) => {
     }
   };
 
-  console.log('clickedProduct', clickedProduct);
+  useEffect(() => {
+    setSelectedColors(clickedProduct.colors);
+    setVariations(clickedProduct.sizes);
+
+    if (clickedProduct) {
+      const updatedProductData = {
+        ...productData,
+        name: clickedProduct?.name,
+        description: clickedProduct?.description,
+        image: clickedProduct?.image?.original,
+        gallery: clickedProduct?.gallery.map((image) => image?.original),
+        price: clickedProduct?.price,
+        sale_price: clickedProduct?.sale_price,
+        quantity: clickedProduct?.quantity,
+        type: clickedProduct?.type,
+        meta: clickedProduct?.meta,
+        tags: clickedProduct.tags,
+        category: clickedProduct.category,
+      };
+
+      setTagsList(clickedProduct.tags);
+      setBrand(clickedProduct.brand);
+      setSelectedCategories(clickedProduct.category);
+
+      setProductData(updatedProductData);
+    }
+  }, [clickedProduct]);
+
+  console.log(clickedProduct);
+
   return (
     <div>
-      <Typography variant="h4">View product</Typography>
+      <Typography variant="h4">Create a new product</Typography>
       <div className="create-product-details-yok">
         <div className="create-product-details-and-title-para-yok">
           <Typography variant="h6">Details</Typography>
@@ -375,9 +478,10 @@ const EditCustomProduct = ({ clickedProduct }) => {
               label="Product name"
               variant="outlined"
               name="name"
-              value={productData?.name}
+              value={productData.name}
               onChange={handleChange}
             />
+            {errors.name && <div style={{ color: 'red', fontSize: '15px' }}>{errors.name}</div>}
           </div>
 
           <div className="mt-4">
@@ -401,30 +505,8 @@ const EditCustomProduct = ({ clickedProduct }) => {
                   ))}
               </div>
             </FormControl>
+            {errors.tags && <div style={{ color: 'red', fontSize: '15px' }}>{errors.tags}</div>}
           </div>
-
-          {/* <div className="mt-4">
-            <FormControl fullWidth>
-              <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
-              <Select
-                labelId="demo-multiple-checkbox-label"
-                id="tag-multiple-checkbox"
-                multiple
-                value={tags}
-                onChange={(event) => handleTagChange('tags', event)}
-                input={<OutlinedInput label="Tag" />}
-                renderValue={(selected) => selected.join(", ")}
-                MenuProps={MenuProps}
-              >
-                {tagsValue.map((name) => (
-                  <MenuItem key={name} value={name}>
-                    <Checkbox checked={tags.indexOf(name) > -1} />
-                    <ListItemText primary={name} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </div> */}
 
           <div className="mt-4">
             <FormControl fullWidth>
@@ -446,6 +528,7 @@ const EditCustomProduct = ({ clickedProduct }) => {
                 ))}
               </Select>
             </FormControl>
+            {errors?.color && <div style={{ color: 'red', fontSize: '15px' }}>{errors?.color}</div>}
           </div>
 
           <div className="mt-4">
@@ -455,9 +538,11 @@ const EditCustomProduct = ({ clickedProduct }) => {
               placeholder="Description"
               label="Description"
               name="description"
-              value={productData?.description}
               onChange={handleChange}
             ></textarea>
+            {errors.description && (
+              <div style={{ color: 'red', fontSize: '15px' }}>{errors.description}</div>
+            )}
           </div>
 
           <div className="mt-3">
@@ -473,7 +558,7 @@ const EditCustomProduct = ({ clickedProduct }) => {
                 }}
                 accept="image/*"
                 id="image-upload"
-                multiple="false"
+                multiple={false}
                 name="image"
                 type="file"
                 onChange={handleInputChange}
@@ -501,6 +586,9 @@ const EditCustomProduct = ({ clickedProduct }) => {
                       style={{ maxWidth: '100px', maxHeight: '100px' }}
                     />
                   </div>
+                )}
+                {errors.image && (
+                  <div style={{ color: 'red', fontSize: '15px' }}>{errors.image}</div>
                 )}
               </div>
             </div>
@@ -542,7 +630,11 @@ const EditCustomProduct = ({ clickedProduct }) => {
                 {productData.gallery.map((image, index) => (
                   <img
                     key={index}
-                    src={typeof image === 'string' ? image : URL.createObjectURL(image)}
+                    src={
+                      typeof productData.image === 'string'
+                        ? productData.image
+                        : URL.createObjectURL(productData.image)
+                    }
                     alt={`Selected ${index + 1}`}
                     style={{
                       maxWidth: '100px',
@@ -551,6 +643,9 @@ const EditCustomProduct = ({ clickedProduct }) => {
                     }}
                   />
                 ))}
+                {errors.gallery && (
+                  <div style={{ color: 'red', fontSize: '15px' }}>{errors.gallery}</div>
+                )}
               </div>
             )}
           </div>
@@ -573,6 +668,7 @@ const EditCustomProduct = ({ clickedProduct }) => {
               value={productData.price}
               onChange={handleChange}
             />
+            {errors.price && <div style={{ color: 'red', fontSize: '15px' }}>{errors.price}</div>}
           </div>
 
           <div className="mt-4">
@@ -585,6 +681,9 @@ const EditCustomProduct = ({ clickedProduct }) => {
               value={productData.sale_price}
               onChange={handleChange}
             />
+            {errors.sale_price && (
+              <div style={{ color: 'red', fontSize: '15px' }}>{errors.sale_price}</div>
+            )}
           </div>
 
           <div className="mt-4">
@@ -594,9 +693,11 @@ const EditCustomProduct = ({ clickedProduct }) => {
               label="Quantity"
               variant="outlined"
               name="quantity"
-              value={productData.quantity}
               onChange={handleChange}
             />
+            {errors.quantity && (
+              <div style={{ color: 'red', fontSize: '15px' }}>{errors.quantity}</div>
+            )}
           </div>
         </div>
       </div>
@@ -614,39 +715,43 @@ const EditCustomProduct = ({ clickedProduct }) => {
                 labelId="demo-multiple-checkbox-label"
                 id="color-multiple-checkbox"
                 multiple
-                value={color}
+                value={selectedColors}
                 onChange={(event) => handleTagChange('colors', event)}
                 input={<OutlinedInput label="Colors" />}
-                renderValue={(selected) => selected.join(', ')}
+                renderValue={(selected) => selected.map((item) => item.name).join(', ')}
                 MenuProps={MenuProps}
               >
-                {colorsValue.map((name) => (
-                  <MenuItem key={name} value={name}>
-                    <Checkbox checked={color.indexOf(name) > -1} />
-                    <ListItemText primary={name} />
+                {colors.map((color) => (
+                  <MenuItem key={color._id} value={color}>
+                    <Checkbox
+                      checked={selectedColors.some(
+                        (selectedColor) => selectedColor.name === color.name
+                      )}
+                    />
+                    <ListItemText primary={color.name} />
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
+            {errors?.color && <div style={{ color: 'red', fontSize: '15px' }}>{errors?.color}</div>}
           </div>
 
           <div className="mt-4">
             <FormControl fullWidth>
-              <InputLabel id="demo-multiple-checkbox-label">Variations</InputLabel>
+              <InputLabel id="demo-multiple-checkbox-label">Sizes</InputLabel>
               <Select
                 labelId="demo-multiple-checkbox-label"
                 id="demo-multiple-checkbox"
                 multiple
                 value={variations}
                 onChange={(event) => handleTagChange('variations', event)}
-                input={<OutlinedInput label="Variations" />}
-                renderValue={(selected) => selected.join(', ')}
-                MenuProps={MenuProps}
+                input={<OutlinedInput label="Sizes" />}
+                renderValue={(selected) => selected.map((item) => item.size).join(', ')}
               >
-                {variationsValue.map((name) => (
-                  <MenuItem key={name} value={name}>
-                    <Checkbox checked={variations.indexOf(name) > -1} />
-                    <ListItemText primary={name} />
+                {variationOptions.map(({ _id, size }) => (
+                  <MenuItem key={_id} value={size}>
+                    <Checkbox checked={variations.indexOf(size) > -1} />
+                    <ListItemText primary={size} />
                   </MenuItem>
                 ))}
               </Select>
@@ -662,12 +767,27 @@ const EditCustomProduct = ({ clickedProduct }) => {
                   control={<Checkbox />}
                   label={cat.name}
                   name={cat.slug}
-                  checked={selectedCategories?.includes(cat.slug)} // Check if the category is selected
+                  checked={selectedCategories.includes(cat.slug)} // Check if the category is selected
                   onChange={handleCategoryCheckboxChange}
                 />
               ))}
             </div>
+            {/* Display error message if any */}
+            {errors.gender && <div style={{ color: 'red', fontSize: '15px' }}></div>}
           </div>
+          {/* <div className="mt-4">
+            <FormControlLabel
+              fullWidth
+              control={
+                <Checkbox
+                  checked={productData.customizable}
+                  name="customizable"
+                  onChange={(event) => handleChange(event)}
+                />
+              }
+              label="Customizable"
+            />
+          </div> */}
 
           <div className="mt-4">
             <FormControl component="fieldset">
@@ -692,9 +812,6 @@ const EditCustomProduct = ({ clickedProduct }) => {
               placeholder="Product Details"
               label="Product Details"
               name="Product Details"
-              value={
-                productData?.meta.find((val) => val.title === 'Product Details')?.content || ''
-              }
               onChange={handleInputChange}
             ></textarea>
           </div>
@@ -706,10 +823,6 @@ const EditCustomProduct = ({ clickedProduct }) => {
               placeholder="Additional Information"
               label="Additional Information"
               name="Additional Information"
-              value={
-                productData?.meta.find((val) => val.title === 'Additional Information')?.content ||
-                ''
-              }
               onChange={handleInputChange}
             ></textarea>
           </div>
@@ -721,9 +834,6 @@ const EditCustomProduct = ({ clickedProduct }) => {
               placeholder="Customer Reviews"
               label="Customer Reviews"
               name="Customer Reviews"
-              value={
-                productData?.meta.find((val) => val.title === 'Customer Reviews')?.content || ''
-              }
               onChange={handleInputChange}
             ></textarea>
           </div>
@@ -732,7 +842,7 @@ const EditCustomProduct = ({ clickedProduct }) => {
 
       <div className="create-product-button-yok">
         <Button onClick={handleCreateProduct} variant="contained" color="inherit">
-          Save Product
+          Create Product
         </Button>
       </div>
     </div>

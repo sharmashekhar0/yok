@@ -4,7 +4,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { Stack } from '@mui/material';
+import { InputAdornment, Stack } from '@mui/material';
 import { useForm } from 'react-hook-form';
 
 const ViewCustomProductRequest = ({ clickedProduct }) => {
@@ -16,6 +16,22 @@ const ViewCustomProductRequest = ({ clickedProduct }) => {
         <Typography variant="h4" gutterBottom>
           Custom Product Request
         </Typography>
+        <Stack
+          className="input-section"
+          sx={{
+            marginBottom: '10px',
+          }}
+        >
+          <TextField
+            className="input-box"
+            style={{ width: '100%' }}
+            id="outlined-basic"
+            label="Product Name"
+            disabled
+            value={clickedProduct?.productName}
+            variant="outlined"
+          />
+        </Stack>
         {clickedProduct?.name && (
           <Stack
             className="input-section"
@@ -70,6 +86,7 @@ const ViewCustomProductRequest = ({ clickedProduct }) => {
             </div>
           </div>
         )}
+
         <Stack
           className="input-section"
           sx={{
@@ -84,6 +101,21 @@ const ViewCustomProductRequest = ({ clickedProduct }) => {
             value={clickedProduct?.color}
             disabled
             variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <div
+                    style={{
+                      width: '24px',
+                      height: '24px',
+                      backgroundColor: clickedProduct?.color,
+                      marginRight: '10px',
+                      border: '1px solid #ccc',
+                    }}
+                  ></div>
+                </InputAdornment>
+              ),
+            }}
           />
         </Stack>
         <Stack
@@ -97,22 +129,6 @@ const ViewCustomProductRequest = ({ clickedProduct }) => {
             style={{ width: '100%' }}
             id="outlined-basic"
             label="Customization Type"
-            value={clickedProduct?.customizationType}
-            disabled
-            variant="outlined"
-          />
-        </Stack>
-        <Stack
-          className="input-section"
-          sx={{
-            marginBottom: '10px',
-          }}
-        >
-          <TextField
-            className="input-box"
-            style={{ width: '100%' }}
-            id="outlined-basic"
-            label="Customization Basics"
             value={clickedProduct?.customizeBasics}
             disabled
             variant="outlined"
@@ -128,8 +144,8 @@ const ViewCustomProductRequest = ({ clickedProduct }) => {
             className="input-box"
             style={{ width: '100%' }}
             id="outlined-basic"
-            label="Customization Polos"
-            value={clickedProduct?.customizePolos}
+            label="Customization"
+            value={clickedProduct?.customizationType}
             disabled
             variant="outlined"
           />

@@ -14,6 +14,7 @@ import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
 export default function Cart() {
 	const { t } = useTranslation("common");
@@ -26,6 +27,7 @@ export default function Cart() {
 	const authToken = Cookies.get("auth_token");
 	console.log("Auth Token :: ", authToken);
 	const isLoggedIn = authToken ? ROUTES.CHECKOUT : ROUTES.LOGIN;
+	const router = useRouter();
 
 	const { addDiscountToState } = useCart();
 
@@ -126,6 +128,22 @@ export default function Cart() {
 		console.log("remainingAmount :: ", remainingAmount);
 		setTotalAmount(remainingAmount);
 	}
+
+	useEffect(() => {
+		const handleRouteChange = (url) => {
+			// Close the cart when the route changes
+			if (url === ROUTES.CHECKOUT || url === ROUTES.LOGIN) {
+				closeCart();
+			}
+		};
+
+		router.events.on("routeChangeComplete", handleRouteChange);
+
+		// Cleanup the event listener on component unmount
+		return () => {
+			router.events.off("routeChangeComplete", handleRouteChange);
+		};
+	}, [router.events, closeCart]);
 
 	return (
 		<div className="flex flex-col justify-between w-full h-full">
