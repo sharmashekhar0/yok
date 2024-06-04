@@ -149,6 +149,8 @@ export default function OrderView() {
     }
   };
 
+  const dummyData = orders;
+
   const handleView = (productId) => {
     console.log(`View product with ID: ${productId}`);
   };
@@ -167,44 +169,31 @@ export default function OrderView() {
     console.log('Sort Option:', event.target.value);
   };
 
-  let filteredOrders = orders
-    .filter((order) => {
-      const searchTermLower = searchTerm.toLowerCase();
-      const { shippingAddress, status } = order;
-      const addressValues = Object.values(shippingAddress).join(' ').toLowerCase();
-      return (
-        addressValues.includes(searchTermLower) || status.toLowerCase().includes(searchTermLower)
-      );
-    })
-    .filter((order) => {
-      if (sortOption) {
-        return order.status.toLowerCase() === sortOption.toLowerCase();
-      }
-      return true;
-    });
-
-  console.log('sortOption', filteredOrders);
-  const totalPages = Math.ceil(orders?.length / itemsPerPage);
+  const totalPages = Math.ceil(dummyData?.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const filteredProducts = orders
+  let filteredProducts = dummyData
     ?.filter((product) => {
       const searchTermLower = searchTerm.toLowerCase();
       return Object.values(product).some(
         (value) => typeof value === 'string' && value.toLowerCase().includes(searchTermLower)
       );
     })
-    .filter((product) => {
-      if (sortOption === 'Processing') {
-        return product.status === 'Processing';
-      } else if (sortOption === 'Shipped') {
-        return product.status === 'Shipped';
-      } else if (sortOption === 'Delivered') {
-        return product.status === 'Delivered';
-      } else if (sortOption === 'Pending') {
-        return product.status === 'Pending';
+    .sort((a, b) => {
+      if (sortOption === 'RatingHighToLow') {
+        return a.price > b.price ? -1 : 1;
+      } else if (sortOption === 'RatingLowToHigh') {
+        return a.price < b.price ? -1 : 1;
+      } else if (sortOption === 'NumOfSaleHighToLow') {
+        return b.quantity - a.quantity;
+      } else if (sortOption === 'NumOfSaleLowToHigh') {
+        return a.quantity - b.quantity;
+      } else if (sortOption === 'BasePriceHighToLow') {
+        return a.price > b.price ? -1 : 1;
+      } else if (sortOption === 'BasePriceLowToHigh') {
+        return a.price < b.price ? -1 : 1;
       }
-      return true;
+      return 0;
     })
     .slice(startIndex, endIndex);
 
@@ -218,7 +207,8 @@ export default function OrderView() {
       const response = await deleteOrder(orderId);
       console.log(response);
       if (response?.message === 'Order deleted successfully') {
-        filteredOrders = filteredOrders?.filter((order) => order._id !== orderId);
+        const updatedOrders = orders?.filter((order) => (order._id !== orderId));
+        setOrders(updatedOrders);
       }
     } catch (error) {
       console.log('Error while deleting order :: ', error);
@@ -333,8 +323,8 @@ export default function OrderView() {
                 </tr>
               </thead>
               <tbody>
-                {filteredOrders && filteredOrders.length > 0 ? (
-                  filteredOrders.map((orders) => (
+                {filteredProducts && filteredProducts.length > 0 ? (
+                  filteredProducts.map((orders) => (
                     <tr key={orders._id}>
                       <td>{orders._id}</td>
                       <td>{orders.user}</td>

@@ -12,6 +12,7 @@ import ShippingView from 'src/sections/shipping/view/ShippingView';
 import TransectionView from 'src/sections/Transection/view/TransectionView';
 import TermsAndConditions from 'src/sections/termsAndConditions/termsAndConditions';
 import RefundPolicy from 'src/sections/RefundPolicy/RefundPolicy';
+import ShippingPolicy from 'src/sections/ShippingPolicy/ShippingPolicy';
 import PrivacyPolicy from 'src/sections/PrivacyPolicy/PrivacyPolicy';
 import AboutUs from 'src/sections/AboutUs/AboutUs';
 import Submenu from 'src/sections/submenu/Submenu';
@@ -101,6 +102,7 @@ export default function Router() {
               { path: 'rating-approval', element: <RatingApprovalView /> },
               { path: 'terms-and-conditions', element: <TermsAndConditions /> },
               { path: 'refund-policy', element: <RefundPolicy /> },
+              { path: 'shipping-policy', element: <ShippingPolicy /> },
               { path: 'privacy-policy', element: <PrivacyPolicy /> },
               { path: 'sub-menu', element: <Submenu /> },
               { path: 'sub-menu/create', element: <CreateSubmenu /> },

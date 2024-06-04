@@ -6,29 +6,29 @@ import Button from '@mui/material/Button';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import axios from 'axios';
-import { fetchRefundPolicy } from 'src/api/api';
+import { fetchShippingPolicy } from 'src/api/api';
 import Swal from 'sweetalert2';
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
-export default function RefundPolicy() {
+export default function ShippingPolicy() {
   const [editorValue, setEditorValue] = useState('');
-  const [existingRefundPolicy, setExistingRefundPolicy] = useState(null);
+  const [existingShippingPolicy, setExistingShippingPolicy] = useState(null);
 
   useEffect(() => {
-    fetchRefundPolicyData();
+    fetchShippingPolicyData();
   }, []);
 
-  const fetchRefundPolicyData = async () => {
+  const fetchShippingPolicyData = async () => {
     try {
-      const response = await fetchRefundPolicy();
+      const response = await fetchShippingPolicy();
       if (response.status === 200) {
-        setExistingRefundPolicy(response.data.refundPolicy);
-        setEditorValue(response.data.refundPolicy.content || '');
+        setExistingShippingPolicy(response?.data?.shippingPolicy);
+        setEditorValue(response?.data?.shippingPolicy?.content || '');
       } else {
-        console.error('Failed to fetch refund policy');
+        console.error('Failed to fetch shipping policy');
       }
     } catch (error) {
-      console.error('Error fetching refund policy:', error);
+      console.error('Error fetching shipping policy:', error);
     }
   };
 
@@ -38,20 +38,20 @@ export default function RefundPolicy() {
 
   const handleFormSubmit = async () => {
     try {
-      const apiEndpoint = existingRefundPolicy ? 'update' : 'create';
+      const apiEndpoint = existingShippingPolicy ? 'update' : 'create';
       const method = 'post';
       const requestData = {
         content: editorValue,
       };
 
       // If existingRefundPolicy is present, include _id in the request data
-      if (existingRefundPolicy) {
-        requestData._id = existingRefundPolicy._id;
+      if (existingShippingPolicy) {
+        requestData._id = existingShippingPolicy._id;
       }
 
       const response = await axios({
         method: method,
-        url: `${BASE_URL}/refund-policy/${apiEndpoint}`,
+        url: `${BASE_URL}/shipping-policy/${apiEndpoint}`,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -61,18 +61,20 @@ export default function RefundPolicy() {
       });
 
       if (response.status === 200 || response.status === 201) {
-        console.log(`Refund Policy ${existingRefundPolicy ? 'updated' : 'created'} successfully`);
+        console.log(
+          `Shipping Policy ${existingShippingPolicy ? 'updated' : 'created'} successfully`
+        );
         Swal.fire({
-          title: `${existingRefundPolicy ? 'Updated' : 'Created'}!`,
-          text: `Your Policy has been ${existingRefundPolicy ? 'Updated' : 'Created'}.`,
+          title: `${existingShippingPolicy ? 'Updated' : 'Created'}!`,
+          text: `Your Policy has been ${existingShippingPolicy ? 'Updated' : 'Created'}.`,
           icon: 'success',
         });
-        fetchRefundPolicyData();
+        fetchShippingPolicyData();
       } else {
-        console.error(`Failed to ${existingRefundPolicy ? 'update' : 'create'} refund policy`);
+        console.error(`Failed to ${existingShippingPolicy ? 'update' : 'create'} shipping policy`);
       }
     } catch (error) {
-      console.error('Error submitting refund policy:', error);
+      console.error('Error submitting shipping policy:', error);
     }
   };
 
@@ -80,7 +82,7 @@ export default function RefundPolicy() {
     <Container>
       <div>
         <Typography variant="h4" gutterBottom>
-          Refund Policy
+          Shipping Policy
         </Typography>
 
         <ReactQuill

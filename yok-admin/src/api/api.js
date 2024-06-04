@@ -497,6 +497,21 @@ export const fetchRefundPolicy = async () => {
   }
 };
 
+export const fetchShippingPolicy = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/shipping-policy/get`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw error;
+  }
+};
+
 export const fetchAboutUs = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/about-us/get`, {

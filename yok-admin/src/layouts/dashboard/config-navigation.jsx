@@ -176,6 +176,11 @@ const navConfig = [
     icon: <SettingsBackupRestoreIcon />,
   },
   {
+    title: 'Shipping Policy',
+    path: '/shipping-policy',
+    icon: <SettingsBackupRestoreIcon />,
+  },
+  {
     title: 'About Us',
     path: '/about-us',
     icon: <GroupsTwoToneIcon />,

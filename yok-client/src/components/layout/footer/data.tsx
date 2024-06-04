@@ -92,7 +92,7 @@ export const footer = {
 				{
 					id: 2,
 					title: "link-shipping",
-					path: "/",
+					path: "/shipping-policy",
 				},
 				{
 					id: 3,
@@ -322,13 +322,13 @@ export const footerContemporary = {
 				{
 					id: 2,
 					title: "link-shipping",
-					path: "/",
+					path: "/shipping-policy",
 				},
-				{
-					id: 3,
-					title: "link-exchanges",
-					path: "/",
-				},
+				// {
+				// 	id: 3,
+				// 	title: "link-exchanges",
+				// 	path: "/",
+				// },
 			],
 		},
 		{

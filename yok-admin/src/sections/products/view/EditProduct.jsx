@@ -343,6 +343,7 @@ const EditProduct = ({ clickedProduct }) => {
         removePropertiesFromArray(selectedColors, ['_id', 'createdAt', 'updatedAt', '__v']) || [];
 
       const sizes = variations?.map((size) => {
+        console.log(size);
         return { size };
       });
 
@@ -362,6 +363,8 @@ const EditProduct = ({ clickedProduct }) => {
       formData.append('tags', JSON.stringify(tagsList));
       formData.append('brand', brand);
       formData.append('gender', JSON.stringify(productData.gender));
+      console.log(colors);
+      console.log(sizes);
       formData.append('colors', JSON.stringify(colors));
       formData.append('sizes', JSON.stringify(sizes));
       formData.append('meta', JSON.stringify(productData.meta));
@@ -427,7 +430,8 @@ const EditProduct = ({ clickedProduct }) => {
 
   useEffect(() => {
     setSelectedColors(clickedProduct.colors);
-    setVariations(clickedProduct.sizes);
+    
+    
 
     if (clickedProduct) {
       const updatedProductData = {
@@ -740,7 +744,7 @@ const EditProduct = ({ clickedProduct }) => {
                 value={variations}
                 onChange={(event) => handleTagChange('variations', event)}
                 input={<OutlinedInput label="Sizes" />}
-                renderValue={(selected) => selected.map((item) => item.size).join(', ')}
+                renderValue={(selected) => selected.join(', ')}
               >
                 {variationOptions.map(({ _id, size }) => (
                   <MenuItem key={_id} value={size}>

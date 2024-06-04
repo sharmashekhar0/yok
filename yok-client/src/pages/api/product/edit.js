@@ -50,6 +50,8 @@ export default async function handler(req, res) {
 				const colorsArray = JSON.parse(colors);
 				const metaArray = JSON.parse(meta);
 
+				console.log(sizeArray);
+
 				const imageFile = req.files["image"]
 					? req.files["image"][0]
 					: null;

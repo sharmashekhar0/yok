@@ -1,17 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 
-import RefundPolicy from 'src/sections/RefundPolicy/RefundPolicy';
+import ShippingPolicy from 'src/sections/ShippingPolicy/ShippingPolicy';
 
 // ----------------------------------------------------------------------
 
-export default function RefundPage() {
+export default function ShippingPage() {
   return (
     <>
       <Helmet>
         <title> YOK </title>
       </Helmet>
 
-      <RefundPolicy />
+      <ShippingPolicy />
     </>
   );
 }
