@@ -183,6 +183,11 @@ export default function Header() {
 							// data={site_header.menu}
 							className="hidden lg:flex ltr:pl-3.5 rtl:pr-3.5 ltr:xl:pl-5 rtl:xl:pr-5 "
 						/>
+						<Link href={"/custom-product"}>
+							<span style={{ whiteSpace: "nowrap" }}>
+								Custom Product
+							</span>
+						</Link>
 					</div>
 
 					<div className="flex items-center flex-shrink-0 ltr:ml-auto rtl:mr-auto gap-x-7">

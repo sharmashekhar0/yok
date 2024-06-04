@@ -706,10 +706,10 @@ export default function ProductPage() {
 												"cursor-pointer rounded border w-9 md:w-11 h-9 md:h-11 p-1 mb-2 md:mb-3 ltr:mr-2 rtl:ml-2 ltr:md:mr-3 rtl:md:ml-3 flex justify-center items-center text-heading text-xs md:text-sm uppercase font-semibold transition duration-200 ease-in-out hover:border-black",
 												{
 													"border-black":
-														color.hexcode ===
+														color?.name ===
 														selectedColor,
 													"border-gray-100":
-														color.hexcode !==
+														color?.name !==
 														selectedColor,
 												}
 											)}
