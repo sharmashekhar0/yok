@@ -63,7 +63,7 @@ export default function ProductPopup() {
 	// 	: true;
 
 	const handleColorSelect = (color) => {
-		setSelectedColor(color.hexcode);
+		setSelectedColor(color.name);
 	};
 
 	const handleSizeSelect = (size) => {

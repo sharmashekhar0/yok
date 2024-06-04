@@ -94,11 +94,11 @@ export const footer = {
 					title: "link-shipping",
 					path: "/shipping-policy",
 				},
-				{
-					id: 3,
-					title: "link-exchanges",
-					path: "/",
-				},
+				// {
+				// 	id: 3,
+				// 	title: "link-exchanges",
+				// 	path: "/",
+				// },
 			],
 		},
 		{

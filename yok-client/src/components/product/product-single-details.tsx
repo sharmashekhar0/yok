@@ -69,7 +69,7 @@ const ProductSingleDetails: React.FC = () => {
 	);
 
 	const handleColorSelect = (color) => {
-		setSelectedColor(color.hexcode);
+		setSelectedColor(color.name);
 	};
 
 	const handleSizeSelect = (size) => {

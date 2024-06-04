@@ -261,7 +261,7 @@ export default function ProductPage() {
 	const [uploadedImageUrl, setUploadedImageUrl] = useState("");
 
 	const handleColorSelect = (color) => {
-		setSelectedColor(color.hexcode);
+		setSelectedColor(color.name);
 	};
 
 	const handleNameChange = (e) => {
