@@ -543,9 +543,6 @@ export default function ProductPage() {
 												data?.gallery[0]?.original
 													? data?.gallery[0].original
 													: "/assets/placeholder/products/product-gallery.svg"
-												// selectedColor === "black"
-												// 	? "https://myawsproductsbucket.s3.ap-south-1.amazonaws.com/1712080240978-prod_product_images_CUS0001RNT-black-front.png"
-												// 	: "https://m.media-amazon.com/images/I/61ckXdPNKTL._SY741_.jpg"
 											}
 											alt={`${data?.name}--0`}
 											className="object-cover w-full"
@@ -557,9 +554,6 @@ export default function ProductPage() {
 												data?.gallery[1]?.original
 													? data.gallery[1].original
 													: "/assets/placeholder/products/product-gallery.svg"
-												// selectedColor === "black"
-												// 	? "https://myawsproductsbucket.s3.ap-south-1.amazonaws.com/1712080240971-prod_product_images_CUS0001RNT-black-back.png"
-												// 	: "https://m.media-amazon.com/images/I/61wrWvif-vL._SY741_.jpg"
 											}
 											alt={`${data?.name}--0`}
 											className="object-cover w-full"
@@ -583,7 +577,7 @@ export default function ProductPage() {
 											: "text-black"
 									}`}
 								>
-									{"nameHolder"}
+									{nameHolder}
 								</span>
 							</SwiperSlide>
 						</Carousel>
@@ -593,13 +587,10 @@ export default function ProductPage() {
 								{checkedBox === "front" ? (
 									<img
 										src={
-											data?.gallery &&
+											data?.gallery[0] &&
 											data?.gallery[0]?.original
-												? data.gallery[0].original
+												? data?.gallery[0].original
 												: "/assets/placeholder/products/product-gallery.svg"
-											// selectedColor === "Black"
-											// 	? "https://myawsproductsbucket.s3.ap-south-1.amazonaws.com/1712080240978-prod_product_images_CUS0001RNT-black-front.png"
-											// 	: "https://m.media-amazon.com/images/I/61ckXdPNKTL._SY741_.jpg"
 										}
 										alt={`${data?.name}--0`}
 										className="object-cover w-full"
@@ -607,13 +598,10 @@ export default function ProductPage() {
 								) : (
 									<img
 										src={
-											data?.gallery[1] &&
+											data?.gallery &&
 											data?.gallery[1]?.original
 												? data.gallery[1].original
 												: "/assets/placeholder/products/product-gallery.svg"
-											// selectedColor === "Black"
-											// 	? "https://myawsproductsbucket.s3.ap-south-1.amazonaws.com/1712080240971-prod_product_images_CUS0001RNT-black-back.png"
-											// 	: "https://m.media-amazon.com/images/I/61wrWvif-vL._SY741_.jpg"
 										}
 										alt={`${data?.name}--0`}
 										className="object-cover w-full"

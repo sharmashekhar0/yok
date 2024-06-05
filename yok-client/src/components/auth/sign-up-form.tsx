@@ -117,7 +117,7 @@ const SignUpForm: React.FC = () => {
         </span>
       </div>
 
-      <Button
+      {/* <Button
         type="submit"
         loading={isPending}
         disabled={isPending}
@@ -125,7 +125,7 @@ const SignUpForm: React.FC = () => {
       >
         <ImFacebook2 className="text-sm sm:text-base ltr:mr-1.5 rtl:ml-1.5" />
         {t("common:text-login-with-facebook")}
-      </Button>
+      </Button> */}
       <Button
         type="submit"
         loading={isPending}

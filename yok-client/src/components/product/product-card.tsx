@@ -213,7 +213,7 @@ const ProductCard: FC<ProductProps> = ({
 					variant === "gridModernWide" ||
 					variant === "gridTrendy") && (
 					<div className="flex items-center py-2 gap-x-2">
-						<svg
+						{/* <svg
 							className="w-4 h-4 sm:w-6 sm:h-6 text-[#FBD103]"
 							fill="currentColor"
 							viewBox="0 0 20 20"
@@ -223,7 +223,7 @@ const ProductCard: FC<ProductProps> = ({
 						</svg>
 						<span className="text-xs font-semibold truncate sm:text-sm text-heading">
 							4.5
-						</span>
+						</span> */}
 						{product.quantity === 0 && (
 							<span className="text-xs sm:text-sm leading-5 ltr:pl-3 rtl:pr-3 font-semibold text-[#EF4444]">
 								Out of stock
