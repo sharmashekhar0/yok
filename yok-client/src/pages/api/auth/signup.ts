@@ -1,8 +1,9 @@
-import User from "@/Model/User";
-import connectDB from "@/pages/lib/connectDB";
+import User from "../../../models/User";
+import connectDB from "../../../lib/mongodb";
 import crypto from "crypto";
+import { NextApiRequest, NextApiResponse } from "next";
 
-export default async (req, res) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
 	await connectDB();
 	if (req.method === "POST") {
 		const { username, password, firstName, lastName } = req.body;
