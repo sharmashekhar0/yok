@@ -35,7 +35,7 @@ export default function ColorPage() {
       }
     };
     loadColors();
-  }, []);
+  }, [activeButton]);
 
   const handleNewBannerButtonClick = () => {
     setActiveButton('newColor');
@@ -142,7 +142,7 @@ export default function ColorPage() {
                 {filteredProducts && filteredProducts.length > 0 ? (
                   filteredProducts?.map((product, i) => (
                     <tr key={i}>
-                      <td>{i + 1}</td>
+                      <td>{(currentPage - 1) * itemsPerPage + i + 1}</td>
                       <td>{product.name}</td>
                       <td>{product.hexcode}</td>
                       <td>

@@ -4,18 +4,22 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { InputAdornment, Stack } from '@mui/material';
+import { IconButton, InputAdornment, Stack } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import CloseIcon from '@mui/icons-material/Close';
 
-const ViewCustomProductRequest = ({ clickedProduct }) => {
+const ViewCustomProductRequest = ({ clickedProduct, setActiveButton }) => {
   console.log('Clicked Custom Product Request :: ', clickedProduct);
 
   return (
     <Container style={{ width: '70%' }}>
       <form>
-        <Typography variant="h4" gutterBottom>
-          Custom Product Request
-        </Typography>
+        <Stack flexDirection="row" alignItems="center" justifyContent="space-between">
+          <Typography variant="h4">Create a new product</Typography>
+          <IconButton onClick={() => setActiveButton('customProductRequests')} title="Close">
+            <CloseIcon className="red" />
+          </IconButton>
+        </Stack>
         <Stack
           className="input-section"
           sx={{

@@ -34,12 +34,27 @@ const LoginForm: React.FC = () => {
 		});
 		console.log(email, password, remember_me, "data");
 	}
-	function handelSocialLogin() {
-		login({
-			email: "demo@demo.com",
-			password: "demo",
-			remember_me: true,
-		});
+	async function handelSocialLogin({
+		email,
+		password,
+		remember_me,
+	}: LoginInputType) {
+		try {
+			const googleUser = await window?.gapi?.auth2
+				.getAuthInstance()
+				.signIn();
+			const googleToken = googleUser.getAuthResponse().id_token;
+			console.log(googleToken);
+			login({
+				email, // You can set an empty string or any placeholder value for email and password
+				password,
+				remember_me, // Set to true if you want to remember the user
+				googleToken, // Pass the Google token to the login mutation
+			});
+		} catch (error) {
+			console.error("Error during Google login:", error);
+			// Handle error
+		}
 	}
 	function handleSignUp() {
 		setModalView("SIGN_UP_VIEW");

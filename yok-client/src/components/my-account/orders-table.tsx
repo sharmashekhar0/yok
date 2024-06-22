@@ -52,7 +52,7 @@ const OrdersTable: React.FC<{ orders: Order[] }> = ({ orders }) => {
 									{t("text-date")}
 								</th>
 								<th className="p-4 font-semibold bg-gray-100 text-heading ltr:text-left rtl:text-right lg:text-center">
-									{t("text-status")}
+									{"Payment Status"}
 								</th>
 								<th className="p-4 font-semibold bg-gray-100 text-heading ltr:text-left rtl:text-right lg:text-center">
 									{t("text-total")}
@@ -82,7 +82,7 @@ const OrdersTable: React.FC<{ orders: Order[] }> = ({ orders }) => {
 										).toLocaleDateString()}
 									</td>
 									<td className="px-4 py-5 ltr:text-left rtl:text-right lg:text-center text-heading">
-										{order.status}
+										{order.paymentStatus}
 									</td>
 									<td className="px-4 py-5 ltr:text-left rtl:text-right lg:text-center text-heading">
 										₹{order.totalPrice.toFixed(2)} for{" "}

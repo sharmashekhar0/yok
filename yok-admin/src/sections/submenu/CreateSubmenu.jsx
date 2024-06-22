@@ -1,8 +1,10 @@
 /* eslint-disable */
 import React, { useState } from 'react';
-import { Stack, TextField, Button, Container, Grid, Typography } from '@mui/material';
+import { Stack, TextField, Button, Container, Grid, Typography, IconButton } from '@mui/material';
 import { creteSubmenu } from 'src/api/api';
 import Swal from 'sweetalert2';
+import { useRouter } from 'src/routes/hooks';
+import CloseIcon from '@mui/icons-material/Close';
 
 const Submenu = () => {
   const [menuData, setMenuData] = useState([
@@ -13,6 +15,7 @@ const Submenu = () => {
       columns: [],
     },
   ]);
+  const router = useRouter();
 
   const handleColumnAdd = (menuIndex) => {
     const newMenuData = [...menuData];
@@ -128,6 +131,7 @@ const Submenu = () => {
             columns: [],
           },
         ]);
+        router.back();
       }
     } catch (error) {
       console.error('Error storing menu data:', error);
@@ -140,9 +144,12 @@ const Submenu = () => {
   };
   return (
     <Container maxWidth="md">
-      <Typography variant="h4" gutterBottom>
-        Create Menu
-      </Typography>
+      <Stack flexDirection="row" alignItems="center" justifyContent="space-between">
+        <Typography variant="h4">Create a new product</Typography>
+        <IconButton onClick={() => router.back()} title="Close">
+          <CloseIcon className="red" />
+        </IconButton>
+      </Stack>
       <form onSubmit={handleSubmit}>
         {menuData.map((menu, menuIndex) => (
           <div key={menu.id}>

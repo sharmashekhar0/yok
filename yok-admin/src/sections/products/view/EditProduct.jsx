@@ -11,11 +11,15 @@ import {
   FormControlLabel,
   InputLabel,
   MenuItem,
+  IconButton,
   Radio,
   RadioGroup,
   Select,
   TextField,
+  Stack,
 } from '@mui/material';
+
+import CloseIcon from '@mui/icons-material/Close';
 
 import {
   createProductAPI,
@@ -47,7 +51,7 @@ const variationsValue = ['Small', 'Medium', 'Large', 'Extra Large'];
 
 const colorsValue = ['Red', 'Green', 'Orange'];
 
-const EditProduct = ({ clickedProduct }) => {
+const EditProduct = ({ clickedProduct, setActiveButton }) => {
   const navigate = useNavigate();
   const [tags, setTags] = React.useState([]);
   // const [color, setColor] = React.useState([]);
@@ -62,10 +66,6 @@ const EditProduct = ({ clickedProduct }) => {
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [brand, setBrand] = useState('');
-
-  useEffect(() => {
-    console.log(clickedProduct);
-  }, []);
 
   const getBrandsHandler = async () => {
     try {
@@ -127,8 +127,7 @@ const EditProduct = ({ clickedProduct }) => {
     brand: '',
     image: null,
     gallery: [],
-    colors: [],
-    sizes: [],
+    variations: [],
     meta: [],
     gender: [],
     type: 'Normal',
@@ -184,6 +183,7 @@ const EditProduct = ({ clickedProduct }) => {
       setSelectedColors(value);
     }
     if (name === 'variations') {
+      console.log(value);
       setVariations(value);
     }
 
@@ -313,11 +313,15 @@ const EditProduct = ({ clickedProduct }) => {
       if (!productData.name) {
         updatedErrors.name = 'Name is required';
       }
-
+      // if (!productData.slug) {
+      //   updatedErrors.slug = 'Slug is required';
+      // }
       if (!productData.image) {
         updatedErrors.image = 'Image is required';
       }
-
+      // if (!productData.sku) {
+      //   updatedErrors.sku = 'Sku is required';
+      // }
       if (!productData.description) {
         updatedErrors.description = 'Description is required';
       }
@@ -330,6 +334,24 @@ const EditProduct = ({ clickedProduct }) => {
       if (!productData.quantity) {
         updatedErrors.quantity = 'Quantity is required';
       }
+      // if (!productData.gender) {
+      //   updatedErrors.gender = 'Gender is required';
+      // }
+      if (!productData.variations) {
+        updatedErrors.variations = 'Variations is required';
+      }
+      // if (!productData.meta) {
+      //   updatedErrors.meta = 'Meta is required';
+      // }
+      // if (!productData.category) {
+      //   updatedErrors.category = 'Category is required';
+      // }
+      // if (!productData.tags) {
+      //   updatedErrors.tags = 'Tag is required';
+      // }
+      // if (!productData.type) {
+      //   updatedErrors.types = 'Types is required';
+      // }
 
       if (Object.keys(updatedErrors).length > 0) {
         setErrors((prevErrors) => ({
@@ -343,15 +365,13 @@ const EditProduct = ({ clickedProduct }) => {
         removePropertiesFromArray(selectedColors, ['_id', 'createdAt', 'updatedAt', '__v']) || [];
 
       const sizes = variations?.map((size) => {
-        console.log(size);
         return { size };
       });
 
-      console.log(productData);
-
       const formData = new FormData();
+
+      formData.append('productId', productData.productId);
       formData.append('image', productData.image);
-      formData.append('productId', productData?.productId);
       formData.append('name', productData.name);
       formData.append('slug', productData.slug);
       formData.append('sku', productData.sku);
@@ -363,8 +383,6 @@ const EditProduct = ({ clickedProduct }) => {
       formData.append('tags', JSON.stringify(tagsList));
       formData.append('brand', brand);
       formData.append('gender', JSON.stringify(productData.gender));
-      console.log(colors);
-      console.log(sizes);
       formData.append('colors', JSON.stringify(colors));
       formData.append('sizes', JSON.stringify(sizes));
       formData.append('meta', JSON.stringify(productData.meta));
@@ -374,17 +392,31 @@ const EditProduct = ({ clickedProduct }) => {
         formData.append(`gallery`, image);
       });
 
+      console.log('Selected Categories :: ', selectedCategories);
+
       const response = await editProductAPI(formData);
       console.log('Product created successfully:', response);
-      Swal.fire({
-        position: 'center',
-        icon: 'success',
-        title: 'Product has been updated',
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      // if (response) {
+      //   navigate('/products');
+      // }
+      if (response?.message !== 'Product created successfully') {
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: 'Product has been created',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Product creation failed.',
+          showConfirmButton: true,
+          confirmButtonText: 'Try Again',
+        });
+      }
       setProductData({
-        productId: '',
         name: '',
         slug: '',
         sku: 'N/A',
@@ -401,6 +433,7 @@ const EditProduct = ({ clickedProduct }) => {
         gender: [],
         type: 'Normal',
       });
+      setActiveButton('product');
     } catch (error) {
       console.error('Error creating product:', error);
     }
@@ -429,10 +462,14 @@ const EditProduct = ({ clickedProduct }) => {
   };
 
   useEffect(() => {
-    setSelectedColors(clickedProduct.colors);
-    
-    
-
+    console.log(clickedProduct);
+    setSelectedColors(clickedProduct?.colors);
+    const sizes = clickedProduct?.sizes?.map((size) => size?.size);
+    console.log(sizes);
+    setVariations(sizes);
+    setSelectedCategories(clickedProduct.category || []);
+    setBrand(clickedProduct.brand);
+    setTagsList(clickedProduct.tags);
     if (clickedProduct) {
       const updatedProductData = {
         ...productData,
@@ -446,14 +483,8 @@ const EditProduct = ({ clickedProduct }) => {
         quantity: clickedProduct?.quantity,
         type: clickedProduct?.type,
         meta: clickedProduct?.meta,
-        tags: clickedProduct.tags,
-        category: clickedProduct.category,
       };
-
-      setTagsList(clickedProduct.tags);
-      setBrand(clickedProduct.brand);
-      setSelectedCategories(clickedProduct.category);
-
+      console.log(updatedProductData);
       setProductData(updatedProductData);
     }
   }, [clickedProduct]);
@@ -462,7 +493,13 @@ const EditProduct = ({ clickedProduct }) => {
 
   return (
     <div>
-      <Typography variant="h4">Create a new product</Typography>
+      <Stack flexDirection="row" alignItems="center" justifyContent="space-between">
+        <Typography variant="h4">Create a new product</Typography>
+        <IconButton onClick={() => setActiveButton('product')} title="Close">
+          <CloseIcon className="red" />
+        </IconButton>
+      </Stack>
+
       <div className="create-product-details-yok">
         <div className="create-product-details-and-title-para-yok">
           <Typography variant="h6">Details</Typography>
@@ -536,6 +573,7 @@ const EditProduct = ({ clickedProduct }) => {
               placeholder="Description"
               label="Description"
               name="description"
+              value={productData?.description}
               onChange={handleChange}
             ></textarea>
             {errors.description && (
@@ -576,9 +614,9 @@ const EditProduct = ({ clickedProduct }) => {
                     <Typography variant="subtitle1">Selected Image:</Typography>
                     <img
                       src={
-                        typeof productData.image === 'string'
-                          ? productData.image
-                          : URL.createObjectURL(productData.image)
+                        typeof productData?.image === 'string'
+                          ? productData?.image
+                          : URL.createObjectURL(productData?.image)
                       }
                       alt="Selected"
                       style={{ maxWidth: '100px', maxHeight: '100px' }}
@@ -628,11 +666,7 @@ const EditProduct = ({ clickedProduct }) => {
                 {productData.gallery.map((image, index) => (
                   <img
                     key={index}
-                    src={
-                      typeof productData.image === 'string'
-                        ? productData.image
-                        : URL.createObjectURL(productData.image)
-                    }
+                    src={typeof image === 'string' ? image : URL.createObjectURL(image)}
                     alt={`Selected ${index + 1}`}
                     style={{
                       maxWidth: '100px',
@@ -691,6 +725,7 @@ const EditProduct = ({ clickedProduct }) => {
               label="Quantity"
               variant="outlined"
               name="quantity"
+              value={productData?.quantity}
               onChange={handleChange}
             />
             {errors.quantity && (
@@ -744,7 +779,9 @@ const EditProduct = ({ clickedProduct }) => {
                 value={variations}
                 onChange={(event) => handleTagChange('variations', event)}
                 input={<OutlinedInput label="Sizes" />}
-                renderValue={(selected) => selected.join(', ')}
+                renderValue={(selected) =>
+                  selected.length > 0 ? selected.map((item) => item).join(', ') : 'Sizes'
+                }
               >
                 {variationOptions.map(({ _id, size }) => (
                   <MenuItem key={_id} value={size}>
@@ -810,6 +847,9 @@ const EditProduct = ({ clickedProduct }) => {
               placeholder="Product Details"
               label="Product Details"
               name="Product Details"
+              value={
+                productData?.meta.find((val) => val.title === 'Product Details')?.content || ''
+              }
               onChange={handleInputChange}
             ></textarea>
           </div>
@@ -821,6 +861,10 @@ const EditProduct = ({ clickedProduct }) => {
               placeholder="Additional Information"
               label="Additional Information"
               name="Additional Information"
+              value={
+                productData?.meta.find((val) => val.title === 'Additional Information')?.content ||
+                ''
+              }
               onChange={handleInputChange}
             ></textarea>
           </div>
@@ -832,6 +876,9 @@ const EditProduct = ({ clickedProduct }) => {
               placeholder="Customer Reviews"
               label="Customer Reviews"
               name="Customer Reviews"
+              value={
+                productData?.meta.find((val) => val.title === 'Customer Reviews')?.content || ''
+              }
               onChange={handleInputChange}
             ></textarea>
           </div>

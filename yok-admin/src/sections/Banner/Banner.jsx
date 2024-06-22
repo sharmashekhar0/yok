@@ -64,7 +64,7 @@ export default function Banner() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [activeButton]);
 
   const loadData = async () => {
     try {
@@ -129,7 +129,7 @@ export default function Banner() {
                 {filteredBanners.length > 0 ? (
                   filteredBanners.map((banner, index) => (
                     <tr key={banner._id}>
-                      <td>{index + 1}</td>
+                      <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                       <td>
                         <img
                           src={banner.image.desktop.url}
@@ -177,7 +177,7 @@ export default function Banner() {
           )}
         </div>
       )}
-      {activeButton === 'newBanner' && <NewBanner />}
+      {activeButton === 'newBanner' && <NewBanner setActiveButton={setActiveButton} />}
     </Container>
   );
 }

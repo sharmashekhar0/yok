@@ -47,7 +47,7 @@ export default function CustomProductPage() {
   const [clickedProduct, setClickedProduct] = useState(null);
   useEffect(() => {
     loadProducts();
-  }, []);
+  }, [activeButton]);
 
   const loadProducts = async () => {
     try {
@@ -210,7 +210,7 @@ export default function CustomProductPage() {
                 {filteredProducts && filteredProducts.length > 0 ? (
                   filteredProducts.map((product, i) => (
                     <tr key={product.id}>
-                      <td>{i + 1}</td>
+                      <td>{(currentPage - 1) * itemsPerPage + i + 1}</td>
                       <td>{product.name}</td>
                       <td>{product.sale_price}</td>
                       <td>{product.price}</td>
@@ -251,12 +251,14 @@ export default function CustomProductPage() {
           </div>
         </div>
       )}
-      {activeButton === 'newCustomProduct' && <NewCustomProduct />}
+      {activeButton === 'newCustomProduct' && (
+        <NewCustomProduct setActiveButton={setActiveButton} />
+      )}
       {activeButton === 'ViewCustomProduct' && (
-        <ViewCustomProduct clickedProduct={clickedProduct} />
+        <ViewCustomProduct clickedProduct={clickedProduct} setActiveButton={setActiveButton} />
       )}
       {activeButton === 'EditCustomProduct' && (
-        <EditCustomProduct clickedProduct={clickedProduct} />
+        <EditCustomProduct clickedProduct={clickedProduct} setActiveButton={setActiveButton} />
       )}
     </Container>
   );

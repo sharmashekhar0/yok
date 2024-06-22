@@ -210,8 +210,8 @@ const CheckoutForm: React.FC = () => {
 
 			console.log("inputData", inputData);
 			console.log(inputData);
-			// Step 1: Create
 
+			// Step 1: Create Order
 			const allProduct = items.map((product) => ({
 				name: product._id,
 				sku: product._id,
@@ -238,16 +238,16 @@ const CheckoutForm: React.FC = () => {
 			// Step 2: Make Payment
 			if (selectedOption === "online") {
 				if (activeGateway === "phonepe") {
-					// Make phonepe payment
-					console.log("Making phonepe payment...");
+					// Make PhonePe payment
+					console.log("Making PhonePe payment...");
 					inputData.totalPrice = discountedAmount;
 					const { data } = await axios.post(
 						API_ENDPOINTS.CREATE_ORDER_PHONEPAY_PAYMENT,
 						inputData
 					);
 					console.log(data.res.success);
-					await updateOrderStatus(orderResponse._id);
 					if (data.res.success) {
+						await updateOrderStatus(orderResponse._id);
 						console.log(
 							data.res.data.instrumentResponse.redirectInfo.url
 						);
@@ -266,7 +266,7 @@ const CheckoutForm: React.FC = () => {
 					);
 					console.log(data);
 
-					var options = {
+					const options = {
 						key: razorpayKeys.keys.key,
 						amount: data.order.amount,
 						currency: "INR",
@@ -274,10 +274,10 @@ const CheckoutForm: React.FC = () => {
 						description: "Test Transaction",
 						image: "http://localhost:3000/_next/image?url=%2Fassets%2Fimages%2Flogo.png&w=96&q=75",
 						order_id: data.order.id,
-						handler: function (response: any) {
+						handler: async function (response: any) {
 							console.log(response);
-							onPaymentSuccess({ input, response });
-							updateOrderStatus(orderResponse._id);
+							await onPaymentSuccess({ input, response });
+							await updateOrderStatus(orderResponse._id);
 						},
 						prefill: {
 							name: `${inputData.firstName} ${inputData.lastName}`,
@@ -291,7 +291,7 @@ const CheckoutForm: React.FC = () => {
 							color: "#3399cc",
 						},
 					};
-					var rzp1 = new window.Razorpay(options);
+					const rzp1 = new window.Razorpay(options);
 					rzp1.open();
 					rzp1.on("payment.failed", function (response: any) {
 						alert(response.error.code);
@@ -303,8 +303,8 @@ const CheckoutForm: React.FC = () => {
 						alert(response.error.metadata.payment_id);
 					});
 
-					// Make razorpay payment
-					console.log("Making razorpay payment...");
+					// Make Razorpay payment
+					console.log("Making Razorpay payment...");
 				}
 			} else if (selectedOption === "cod") {
 				console.log("Order placed with Cash on Delivery.");
@@ -318,39 +318,19 @@ const CheckoutForm: React.FC = () => {
 		console.log(response);
 		const { response: PaymentVerification, input: userData } = response;
 
-		// verify this payment
-
+		// Verify the payment
 		const { data } = await http.post(
 			API_ENDPOINTS.VERIFY_ORDER_PAYMENT,
 			PaymentVerification
 		);
 		console.log(data);
 		if (data.success) {
-			// save order in db
+			// Update order status upon successful verification
+			await updateOrderStatus(userData.orderId);
 			console.log(userData);
-
-			// const allProduct = items.map((product) => ({
-			// 	product: product._id,
-			// 	quantity: product?.quantity || 0,
-			// }));
-
-			// const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER, {
-			// 	user: currentUserData?._id,
-			// 	products: allProduct,
-			// 	totalPrice: subtotal,
-			// 	tracking_number: 0,
-			// 	userData: userData,
-			// 	status: "pending",
-			// 	paymentMethod: selectedOption,
-			// 	paymentStatus: "pending",
-			// 	transactionId: PaymentVerification.razorpay_payment_id,
-			// });
 		}
-		// console.log(data);
-		// alert("order created");
-		// Router.push(ROUTES.ORDER);
 	}
-	// New Function to Handle Test Payment
+
 	const handleTestPayment = async (e: any) => {
 		e.preventDefault();
 		console.log(updateUser);

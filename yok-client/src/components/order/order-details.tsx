@@ -3,21 +3,29 @@ import usePrice from "@framework/product/use-price";
 import { OrderItem } from "@framework/types";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
+import React from "react";
+import Link from "next/link";
+
 const OrderItemCard = ({ product }: { product: OrderItem }) => {
-	console.log(product); // Add this line to check if the product data is received correctly
+	console.log(product); // Check if the product data is received correctly
+
 	const { price: itemTotal } = usePrice({
-		amount: product.price * product.quantity,
+		amount: product?.selling_price * product?.units,
 		currencyCode: "INR",
 	});
+
 	return (
 		<tr
 			className="font-normal border-b border-gray-300 last:border-b-0"
-			key={product.id}
+			key={product._id}
 		>
-			<td className="p-4">
-				{product.name} * {product.quantity}
+			<td className="p-4 flex items-center">
+				<Link href={`/products/${product?.name}`}>{product.name}</Link>{" "}
+				* {product.units}
 			</td>
-			<td className="p-4">{itemTotal}</td>
+			<td className="p-4">
+				{product?.selling_price} * {product.units} = {itemTotal}
+			</td>
 		</tr>
 	);
 };
@@ -30,8 +38,12 @@ const OrderDetails: React.FC<{ className?: string }> = ({
 	} = useRouter();
 	const { t } = useTranslation("common");
 	const { data: order, isLoading } = useOrderQuery(id?.toString()!);
-
+	console.log(order);
 	if (isLoading) return <p>Loading...</p>;
+
+	const totalWithShipping = order
+		? order?.totalPrice + (order.shipping_fee || 0)
+		: 0;
 
 	return (
 		<div className={className}>
@@ -50,8 +62,8 @@ const OrderDetails: React.FC<{ className?: string }> = ({
 					</tr>
 				</thead>
 				<tbody>
-					{order?.products.map((product, index) => (
-						<OrderItemCard key={index} product={product} />
+					{order?.products.map((product) => (
+						<OrderItemCard key={product.id} product={product} />
 					))}
 				</tbody>
 				<tfoot>
@@ -76,15 +88,14 @@ const OrderDetails: React.FC<{ className?: string }> = ({
 					</tr>
 					<tr className="odd:bg-gray-150">
 						<td className="p-4 italic">{t("text-total")}:</td>
-						{/* Assuming total price includes shipping_fee */}
-						<td className="p-4">
-							{order?.totalPrice + (order?.shipping_fee || 0)}
-						</td>
+						<td className="p-4">{totalWithShipping}</td>
 					</tr>
-					<tr className="odd:bg-gray-150">
-						<td className="p-4 italic">{t("text-note")}:</td>
-						<td className="p-4">new order</td>
-					</tr>
+					{order?.note && (
+						<tr className="odd:bg-gray-150">
+							<td className="p-4 italic">{t("text-note")}:</td>
+							<td className="p-4">new order</td>
+						</tr>
+					)}
 				</tfoot>
 			</table>
 		</div>

@@ -4,7 +4,16 @@ import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import {
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 import { createCoupons, createProductAPI } from 'src/api/api';
 
@@ -63,7 +72,12 @@ const NewDiscountCoupon = ({ setActiveButton, createDataForCoupon }) => {
   console.log('productData', productData);
   return (
     <div>
-      <Typography variant="h4">Create a new Coupon</Typography>
+      <Stack flexDirection="row" alignItems="center" justifyContent="space-between">
+        <Typography variant="h4">Create a new product</Typography>
+        <IconButton onClick={() => setActiveButton('product')} title="Close">
+          <CloseIcon className="red" />
+        </IconButton>
+      </Stack>
       <div className="create-product-details-yok">
         <div className="create-product-details-product-name-imagee">
           <div>

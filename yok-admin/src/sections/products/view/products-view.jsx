@@ -49,7 +49,7 @@ export default function ProductsView() {
   const [clickedProduct, setClickedProduct] = useState(null);
   useEffect(() => {
     loadProducts();
-  }, []);
+  }, [activeButton]);
 
   const loadProducts = async () => {
     try {
@@ -132,7 +132,6 @@ export default function ProductsView() {
         <div>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
             <Typography variant="h4">Products</Typography>
-
             <Button
               onClick={handleNewProductButtonClick}
               variant="contained"
@@ -212,7 +211,7 @@ export default function ProductsView() {
                 {filteredProducts && filteredProducts.length > 0 ? (
                   filteredProducts.map((product, i) => (
                     <tr key={product._id}>
-                      <td>{i + 1}</td>
+                      <td>{(currentPage - 1) * itemsPerPage + i + 1}</td>
                       <td>{product.name}</td>
                       <td>{product.sale_price}</td>
                       <td>{product.price}</td>
@@ -253,9 +252,13 @@ export default function ProductsView() {
           </div>
         </div>
       )}
-      {activeButton === 'newProduct' && <NewProduct />}
-      {activeButton === 'viewProduct' && <ViewProduct clickedProduct={clickedProduct} />}
-      {activeButton === 'EditProduct' && <EditProduct clickedProduct={clickedProduct} />}
+      {activeButton === 'newProduct' && <NewProduct setActiveButton={setActiveButton} />}
+      {activeButton === 'viewProduct' && (
+        <ViewProduct clickedProduct={clickedProduct} setActiveButton={setActiveButton} />
+      )}
+      {activeButton === 'EditProduct' && (
+        <EditProduct clickedProduct={clickedProduct} setActiveButton={setActiveButton} />
+      )}
     </Container>
   );
 }

@@ -669,12 +669,13 @@ export const getCustomProducts = async () => {
 
 export const editProductAPI = async (productData) => {
   try {
+    console.log('hello');
     const response = await axios.post(`${BASE_URL}/product/edit`, productData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
-
+    console.log(response);
     return response?.data;
   } catch (error) {
     console.error('Error creating product:', error);

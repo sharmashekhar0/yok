@@ -9,13 +9,17 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  IconButton,
   InputLabel,
   MenuItem,
   Radio,
   RadioGroup,
   Select,
+  Stack,
   TextField,
 } from '@mui/material';
+
+import CloseIcon from '@mui/icons-material/Close';
 
 import { getAllColor, getAllVariation } from 'src/api/api';
 
@@ -39,7 +43,7 @@ const variationsValue = ['Small', 'Medium', 'Large', 'Extra Large'];
 
 const colorsValue = ['Red', 'Green', 'Orange'];
 
-const NewCustomProduct = () => {
+const NewCustomProduct = ({ setActiveButton }) => {
   const navigate = useNavigate();
   const [tags, setTags] = React.useState([]);
   const [colors, setColors] = useState([]);
@@ -381,30 +385,41 @@ const NewCustomProduct = () => {
       // if (response) {
       //   navigate('/products');
       // }
-      Swal.fire({
-        position: 'center',
-        icon: 'success',
-        title: 'Product has been created',
-        showConfirmButton: false,
-        timer: 1500,
-      });
-      setProductData({
-        name: '',
-        slug: '',
-        sku: 'N/A',
-        description: '',
-        price: '',
-        sale_price: '',
-        quantity: '',
-        category: { id: 1, name: 'kids', slug: 'kids' },
-        tags: [],
-        image: null,
-        gallery: [],
-        variations: [],
-        meta: [],
-        gender: [],
-        type: 'Normal',
-      });
+      if (response?.success) {
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: 'Product has been created',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        setProductData({
+          name: '',
+          slug: '',
+          sku: 'N/A',
+          description: '',
+          price: '',
+          sale_price: '',
+          quantity: '',
+          category: { id: 1, name: 'kids', slug: 'kids' },
+          tags: [],
+          image: null,
+          gallery: [],
+          variations: [],
+          meta: [],
+          gender: [],
+          type: 'Normal',
+        });
+        setActiveButton('custom');
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Something went wrong.',
+          showConfirmButton: true,
+          confirmButtonText: 'Try Again',
+        });
+      }
     } catch (error) {
       console.error('Error creating product:', error);
     }
@@ -434,7 +449,12 @@ const NewCustomProduct = () => {
 
   return (
     <div>
-      <Typography variant="h4">Create a new product</Typography>
+      <Stack flexDirection="row" alignItems="center" justifyContent="space-between">
+        <Typography variant="h4">Create a new product</Typography>
+        <IconButton onClick={() => setActiveButton('custom')} title="Close">
+          <CloseIcon className="red" />
+        </IconButton>
+      </Stack>
       <div className="create-product-details-yok">
         <div className="create-product-details-and-title-para-yok">
           <Typography variant="h6">Details</Typography>

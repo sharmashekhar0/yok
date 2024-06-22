@@ -9,7 +9,7 @@ import { Stack } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { createTestimonialAPI } from '../../api/api';
 
-const NewTestimonial = () => {
+const NewTestimonial = ({ setActiveButton }) => {
   const { register, handleSubmit, watch } = useForm();
 
   const [testimonialData, setTestimonialData] = useState({
@@ -41,13 +41,24 @@ const NewTestimonial = () => {
       console.log('Form Data New Testimonial :: ', data);
       const response = await createTestimonialAPI(data);
       console.log('Response new testimonial :: ', response);
-      Swal.fire({
-        position: 'center',
-        icon: 'success',
-        title: 'Testimonial has been created',
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      if (response?.message == 'New Testimonial Created Successfully.') {
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: 'Testimonial has been created',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        setActiveButton('testimonial');
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Something went wrong.',
+          showConfirmButton: true,
+          confirmButtonText: 'Try Again',
+        });
+      }
     } catch (error) {
       console.log('Error while creating new testimonial :: ', error);
     }

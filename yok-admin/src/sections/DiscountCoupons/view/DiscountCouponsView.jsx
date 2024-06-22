@@ -50,7 +50,7 @@ export default function DiscountCouponsView() {
 
   useEffect(() => {
     loadCoupons();
-  }, []);
+  }, [activeButton]);
 
   const loadCoupons = async () => {
     try {
@@ -65,163 +65,6 @@ export default function DiscountCouponsView() {
   const handleNewProductButtonClick = () => {
     setActiveButton('newProduct');
   };
-
-  // const dummyCoupons = [
-  //   {
-  //     startDate: '2023-05-01',
-  //     endDate: '2023-05-15',
-  //     discount: '20%',
-  //     quantity: '100',
-  //     status: 'Active',
-  //   },
-  //   {
-  //     startDate: '2023-06-01',
-  //     endDate: '2023-06-10',
-  //     discount: '15%',
-  //     quantity: '50',
-  //     status: 'Inactive',
-  //   },
-  //   {
-  //     startDate: '2023-07-01',
-  //     endDate: '2023-07-31',
-  //     discount: '25%',
-  //     quantity: '200',
-  //     status: 'Active',
-  //   },
-  //   {
-  //     startDate: '2023-08-05',
-  //     endDate: '2023-08-20',
-  //     discount: '10%',
-  //     quantity: '75',
-  //     status: 'Active',
-  //   },
-  //   {
-  //     startDate: '2023-09-01',
-  //     endDate: '2023-09-15',
-  //     discount: '30%',
-  //     quantity: '150',
-  //     status: 'Inactive',
-  //   },
-  //   {
-  //     startDate: '2023-10-01',
-  //     endDate: '2023-10-31',
-  //     discount: '18%',
-  //     quantity: '100',
-  //     status: 'Active',
-  //   },
-  //   {
-  //     startDate: '2023-11-01',
-  //     endDate: '2023-11-15',
-  //     discount: '22%',
-  //     quantity: '80',
-  //     status: 'Active',
-  //   },
-  //   {
-  //     startDate: '2023-12-01',
-  //     endDate: '2023-12-25',
-  //     discount: '12%',
-  //     quantity: '60',
-  //     status: 'Inactive',
-  //   },
-  //   {
-  //     startDate: '2024-01-01',
-  //     endDate: '2024-01-10',
-  //     discount: '28%',
-  //     quantity: '90',
-  //     status: 'Active',
-  //   },
-  //   {
-  //     startDate: '2024-02-01',
-  //     endDate: '2024-02-28',
-  //     discount: '16%',
-  //     quantity: '120',
-  //     status: 'Active',
-  //   },
-  //   {
-  //     startDate: '2024-03-01',
-  //     endDate: '2024-03-15',
-  //     discount: '24%',
-  //     quantity: '110',
-  //     status: 'Inactive',
-  //   },
-  //   {
-  //     startDate: '2024-04-01',
-  //     endDate: '2024-04-30',
-  //     discount: '8%',
-  //     quantity: '70',
-  //     status: 'Active',
-  //   },
-  //   {
-  //     startDate: '2024-05-01',
-  //     endDate: '2024-05-10',
-  //     discount: '32%',
-  //     quantity: '100',
-  //     status: 'Active',
-  //   },
-  //   {
-  //     startDate: '2024-06-01',
-  //     endDate: '2024-06-15',
-  //     discount: '14%',
-  //     quantity: '85',
-  //     status: 'Inactive',
-  //   },
-  //   {
-  //     startDate: '2024-07-01',
-  //     endDate: '2024-07-31',
-  //     discount: '26%',
-  //     quantity: '160',
-  //     status: 'Active',
-  //   },
-  //   {
-  //     startDate: '2024-08-01',
-  //     endDate: '2024-08-20',
-  //     discount: '9%',
-  //     quantity: '50',
-  //     status: 'Active',
-  //   },
-  //   {
-  //     startDate: '2024-09-01',
-  //     endDate: '2024-09-15',
-  //     discount: '29%',
-  //     quantity: '140',
-  //     status: 'Inactive',
-  //   },
-  //   {
-  //     startDate: '2024-10-01',
-  //     endDate: '2024-10-31',
-  //     discount: '19%',
-  //     quantity: '95',
-  //     status: 'Active',
-  //   },
-  //   {
-  //     startDate: '2024-11-01',
-  //     endDate: '2024-11-15',
-  //     discount: '23%',
-  //     quantity: '75',
-  //     status: 'Active',
-  //   },
-  //   {
-  //     startDate: '2024-12-01',
-  //     endDate: '2024-12-25',
-  //     discount: '13%',
-  //     quantity: '55',
-  //     status: 'Inactive',
-  //   },
-  //   {
-  //     startDate: '2025-01-01',
-  //     endDate: '2025-01-10',
-  //     discount: '27%',
-  //     quantity: '88',
-  //     status: 'Active',
-  //   },
-  //   {
-  //     startDate: '2025-02-01',
-  //     endDate: '2025-02-28',
-  //     discount: '17%',
-  //     quantity: '115',
-  //     status: 'Active',
-  //   },
-  // ];
 
   const dummyCoupons = coupons;
 
@@ -380,7 +223,7 @@ export default function DiscountCouponsView() {
                 {filteredProducts && filteredProducts.length > 0 ? (
                   filteredProducts.map((product, i) => (
                     <tr key={i}>
-                      <td>{i + 1}</td>
+                      <td>{(currentPage - 1) * itemsPerPage + i + 1}</td>
                       <td>{product.name}</td>
                       <td>{product.type}</td>
                       <td>{product.discount}</td>

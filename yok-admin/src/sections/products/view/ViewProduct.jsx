@@ -8,13 +8,16 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  IconButton,
   InputLabel,
   MenuItem,
   Radio,
   RadioGroup,
   Select,
+  Stack,
   TextField,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 import { createProductAPI } from 'src/api/api';
 
@@ -39,7 +42,7 @@ const variationsValue = ['Extra Small', 'Small', 'Medium', 'Large', 'Extra Large
 
 const colorsValue = ['Red', 'Green', 'Orange'];
 
-const ViewProduct = ({ clickedProduct }) => {
+const ViewProduct = ({ clickedProduct, setActiveButton }) => {
   const navigate = useNavigate();
   const [brand, setBrand] = useState('');
   const [brands, setBrands] = useState([]);
@@ -262,7 +265,12 @@ const ViewProduct = ({ clickedProduct }) => {
   console.log('clickedProduct', clickedProduct);
   return (
     <div>
-      <Typography variant="h4">View product</Typography>
+      <Stack flexDirection="row" alignItems="center" justifyContent="space-between">
+        <Typography variant="h4">Create a new product</Typography>
+        <IconButton onClick={() => setActiveButton('product')} title="Close">
+          <CloseIcon className="red" />
+        </IconButton>
+      </Stack>
       <div className="create-product-details-yok">
         <div className="create-product-details-and-title-para-yok">
           <Typography variant="h6">Details</Typography>

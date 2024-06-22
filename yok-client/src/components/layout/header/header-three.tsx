@@ -18,6 +18,8 @@ import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
 import http from "@framework/utils/http";
 // import { Listbox, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
+import { FaLocationDot } from "react-icons/fa6";
+import { MdPermContactCalendar } from "react-icons/md";
 
 const AuthMenu = dynamic(() => import("@components/layout/header/auth-menu"), {
 	ssr: false,
@@ -84,10 +86,24 @@ export default function Header() {
 		<header
 			id="siteHeader"
 			ref={siteHeaderRef}
-			className="relative z-20 w-full h-16 sm:h-20 lg:h-36 xl:h-40 headerThree"
+			className="relative z-20 w-full h-16 sm:h-20 lg:h-36 xl:h-36 headerThree"
 		>
-			<div className="fixed z-20 w-full h-16 px-4 text-gray-700 transition duration-200 ease-in-out bg-white innerSticky body-font sm:h-20 lg:h-36 xl:h-40 ltr:pl-4 rtl:pr-4 ltr:md:pl-0 rtl:md:pr-0 ltr:lg:pl-6 rtl:lg:pr-6 ltr:pr-4 ltr:lg:pr-6 rtl:pl-4 rtl:lg:pl-6 md:px-8 2xl:px-16">
-				<div className="flex items-center justify-center mx-auto max-w-[1920px] h-full lg:h-20 xl:h-24 w-full relative before:absolute before:w-screen before:h-px before:bg-[#F1F1F1] before:bottom-0">
+			<div className="fixed z-20 innerSticky h-10 bg-[#222222] w-full flex items-center justify-between ltr:pl-4 rtl:pr-4 ltr:md:pl-0 rtl:md:pr-0 ltr:lg:pl-6 rtl:lg:pr-6 ltr:pr-4 ltr:lg:pr-6 rtl:pl-4 rtl:lg:pl-6 md:px-8 2xl:px-16 text-sm font-semibold text-white ">
+				<Link href={"/my-account/orders"}>
+					<div className="flex h-12 items-center justify-center gap-2 cursor-pointer">
+						<FaLocationDot />
+						<span>Track Your Order</span>
+					</div>
+				</Link>
+				<Link href={"/contact-us"}>
+					<div className="flex h-12 items-center justify-center gap-2 cursor-pointer">
+						<MdPermContactCalendar />
+						<span>Contact</span>
+					</div>
+				</Link>
+			</div>
+			<div className="fixed z-20 top-10 w-full h-16 px-4 text-gray-700 transition duration-200 ease-in-out bg-white innerSticky body-font sm:h-20 lg:h-fit xl:h-28 ltr:pl-4 rtl:pr-4 ltr:md:pl-0 rtl:md:pr-0 ltr:lg:pl-6 rtl:lg:pr-6 ltr:pr-4 ltr:lg:pr-6 rtl:pl-4 rtl:lg:pl-6 md:px-8 2xl:px-16">
+				<div className="flex items-center justify-center mx-auto max-w-[1920px] h-full lg:h-20 xl:h-28 w-full relative before:absolute before:w-screen before:h-px before:bg-[#F1F1F1] before:bottom-0 gap-4">
 					<button
 						aria-label="Menu"
 						className="flex-col items-center justify-center flex-shrink-0 hidden h-full px-5 outline-none menuBtn md:flex lg:hidden 2xl:px-7 focus:outline-none"
@@ -101,7 +117,7 @@ export default function Header() {
 					</button>
 					<div className="flex items-center ltr:2xl:mr-12 rtl:2xl:ml-12 ltr:3xl:mr-20 rtl:3xl:ml-20">
 						<Logo />
-						<div className="hidden transition-all duration-100 ease-in-out lg:flex ltr:ml-7 rtl:mr-7 ltr:xl:ml-9 rtl:xl:mr-9 ltr:pr-2 rtl:pl-2 headerTopMenu">
+						{/* <div className="hidden transition-all duration-100 ease-in-out lg:flex ltr:ml-7 rtl:mr-7 ltr:xl:ml-9 rtl:xl:mr-9 ltr:pr-2 rtl:pl-2 headerTopMenu">
 							{site_header.pagesMenu?.map((item: any) => (
 								<Link
 									href={item.path}
@@ -116,13 +132,23 @@ export default function Header() {
 									)}
 								</Link>
 							))}
-						</div>
+						</div> */}
+						<HeaderMenu
+							data={catogoriesData}
+							// data={site_header.menu}
+							className="hidden lg:flex ltr:pl-3.5 rtl:pr-3.5 ltr:xl:pl-5 rtl:xl:pr-5"
+						/>
+						<Link href={"/custom-product"} className="px-3 xl:px-4">
+							<span style={{ whiteSpace: "nowrap" }}>
+								Custom Product
+							</span>
+						</Link>
 					</div>
 
 					<div className="relative hidden w-2/6 ltr:mr-auto rtl:ml-auto lg:block">
 						<form
 							onSubmit={handleSearch}
-							className="relative w-full overflow-hidden rounded-md bg-borderBottom"
+							className="relative w-1/2 overflow-hidden rounded-md bg-borderBottom"
 							noValidate
 							role="search"
 						>
@@ -151,6 +177,44 @@ export default function Header() {
 							</label>
 						</form>
 					</div>
+					<div className="flex items-center flex-shrink-0 ltr:ml-auto rtl:mr-auto gap-x-7">
+						{!isAuthorized ? (
+							<AuthMenu
+								isAuthorized={isAuthorized}
+								href={ROUTES.ACCOUNT}
+								className="flex-shrink-0 hidden text-sm xl:text-base lg:flex focus:outline-none text-heading gap-x-3"
+								btnProps={{
+									children: (
+										<>
+											<UserLineIcon className="w-4 xl:w-[17px] h-auto text-black" />
+											{t("text-login")}
+										</>
+									),
+									onClick: handleLogin,
+								}}
+							/>
+						) : (
+							<AuthMenu
+								isAuthorized={!isAuthorized}
+								href={ROUTES.MYACCOUNT}
+								className="flex-shrink-0 hidden text-sm xl:text-base lg:flex focus:outline-none text-heading gap-x-3"
+								btnProps={{
+									children: (
+										<>
+											<Link
+												href={ROUTES.MYACCOUNT}
+												className="flex gap-2"
+											>
+												<UserLineIcon className="w-4 xl:w-[17px] h-auto text-black" />
+												{t("My Account")}
+											</Link>
+										</>
+									),
+								}}
+							/>
+						)}
+						<LanguageSwitcher />
+					</div>
 					<div className="flex flex-shrink-0 transition-all duration-200 ease-in-out transform ltr:ml-auto rtl:mr-auto ltr:mr-3 rtl:ml-3 ltr:lg:mr-5 rtl:lg:ml-5 ltr:xl:mr-8 rtl:xl:ml-8 ltr:2xl:mr-10 rtl:2xl:ml-10 languageSwitcher lg:hidden">
 						<LanguageSwitcher />
 					</div>
@@ -164,15 +228,14 @@ export default function Header() {
               </div> */}
 							<div className="hidden lg:flex md:gap-x-4 align-center">
 								<CartButton />
-								<span className="hidden text-sm font-semibold transition-all duration-100 ease-in-out cursor-pointer lg:font-normal lg:block xl:text-base text-heading">
+								{/* <span className="hidden text-sm font-semibold transition-all duration-100 ease-in-out cursor-pointer lg:font-normal lg:block xl:text-base text-heading">
 									{t("menu:menu-shopping")}
-								</span>
+								</span> */}
 							</div>
 						</div>
 					</div>
 				</div>
-
-				<div className="items-center hidden lg:flex lg:h-16 headerBottom mx-auto max-w-[1920px]">
+				{/* <div className="items-center hidden lg:flex lg:h-16 headerBottom mx-auto max-w-[1920px] ">
 					<div className="flex items-center">
 						<CategoryMenu
 							className="hidden lg:block"
@@ -228,7 +291,7 @@ export default function Header() {
 						)}
 						<LanguageSwitcher />
 					</div>
-				</div>
+				</div> */}
 			</div>
 		</header>
 	);

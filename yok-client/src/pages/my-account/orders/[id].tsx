@@ -23,10 +23,15 @@ export default function OrderPage({ orderData }) {
 
 OrderPage.Layout = Layout;
 
-export const getServerSideProps: GetServerSideProps = async ({ locale, params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+	locale,
+	params,
+}) => {
 	const { id } = params;
 
-	const { data: { order } } = await http.get(API_ENDPOINTS.GET_ORDER(id));
+	const {
+		data: { order },
+	} = await http.get(API_ENDPOINTS.GET_ORDER(id));
 
 	return {
 		props: {

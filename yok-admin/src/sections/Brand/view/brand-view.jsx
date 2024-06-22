@@ -34,7 +34,7 @@ export default function BrandPage() {
       }
     };
     loadBrands();
-  }, []);
+  }, [activeButton]);
 
   const handleNewBrandButtonClick = () => {
     setActiveButton('newBrand');
@@ -138,7 +138,7 @@ export default function BrandPage() {
                 {filteredProducts && filteredProducts.length > 0 ? (
                   filteredProducts?.map((product, i) => (
                     <tr key={i}>
-                      <td>{i + 1}</td>
+                      <td>{(currentPage - 1) * itemsPerPage + i + 1}</td>
                       <td>
                         <img height={'48px'} width={'48px'} src={product.icon} alt="No Avatar" />
                       </td>
@@ -173,7 +173,7 @@ export default function BrandPage() {
           </div>
         </div>
       )}
-      {activeButton === 'newBrand' && <NewBrand />}
+      {activeButton === 'newBrand' && <NewBrand setActiveButton={setActiveButton} />}
     </Container>
   );
 }

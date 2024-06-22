@@ -5,11 +5,12 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Swal from 'sweetalert2';
-import { Stack } from '@mui/material';
+import { IconButton, Stack } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { createVariation } from 'src/api/api';
+import CloseIcon from '@mui/icons-material/Close';
 
-const NewVariation = () => {
+const NewVariation = ({ setActiveButton }) => {
   const { register, handleSubmit, watch } = useForm();
 
   const createNewVariationHandler = async (formData) => {
@@ -18,13 +19,25 @@ const NewVariation = () => {
         size: formData?.size,
       };
       const response = await createVariation(data);
-      Swal.fire({
-        position: 'center',
-        icon: 'success',
-        title: 'Size has been added',
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      console.log(response);
+      if (response?.data?.message === 'Variation data saved successfully') {
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: 'Size has been added',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        setActiveButton('variation');
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Something went wrong.',
+          showConfirmButton: true,
+          confirmButtonText: 'Try Again',
+        });
+      }
     } catch (error) {
       console.log('Error while creating adding variation :: ', error);
     }
@@ -33,9 +46,12 @@ const NewVariation = () => {
   return (
     <Container style={{ width: '70%' }}>
       <form onSubmit={handleSubmit(createNewVariationHandler)}>
-        <Typography variant="h4" gutterBottom>
-          Size
-        </Typography>
+        <Stack flexDirection="row" alignItems="center" justifyContent="space-between">
+          <Typography variant="h4">Create a new product</Typography>
+          <IconButton onClick={() => setActiveButton('variation')} title="Close">
+            <CloseIcon className="red" />
+          </IconButton>
+        </Stack>
         <Stack
           className="input-section"
           sx={{

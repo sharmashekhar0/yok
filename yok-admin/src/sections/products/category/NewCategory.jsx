@@ -8,13 +8,16 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  IconButton,
   InputLabel,
   MenuItem,
   Radio,
   RadioGroup,
   Select,
+  Stack,
   TextField,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 import { createCategoryAPI } from 'src/api/api';
 import Swal from 'sweetalert2';
@@ -40,7 +43,7 @@ const variationsValue = ['Small', 'Medium', 'Extra Large'];
 
 const colorsValue = ['Red', 'Green', 'Orange'];
 
-const NewCategory = ({ categoryDataToEdit }) => {
+const NewCategory = ({ categoryDataToEdit, setActiveButton }) => {
   console.log(categoryDataToEdit);
   const [tags, setTags] = React.useState([]);
   const [color, setColor] = React.useState([]);
@@ -158,7 +161,7 @@ const NewCategory = ({ categoryDataToEdit }) => {
         Swal.fire({
           position: 'center',
           icon: 'success',
-          title: 'category has been created',
+          title: 'Category has been created',
           showConfirmButton: false,
           timer: 1500,
         });
@@ -170,6 +173,15 @@ const NewCategory = ({ categoryDataToEdit }) => {
           tags: [],
           image: null,
         });
+        setActiveButton('category');
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Something went wrong.',
+          showConfirmButton: true,
+          confirmButtonText: 'Try Again',
+        });
       }
       console.log('Category created successfully:', response);
     } catch (error) {
@@ -180,7 +192,12 @@ const NewCategory = ({ categoryDataToEdit }) => {
   console.log('categoryData', categoryData);
   return (
     <div>
-      <Typography variant="h4">Create a new category</Typography>
+      <Stack flexDirection="row" alignItems="center" justifyContent="space-between">
+        <Typography variant="h4">Create a new product</Typography>
+        <IconButton onClick={() => setActiveButton('category')} title="Close">
+          <CloseIcon className="red" />
+        </IconButton>
+      </Stack>
       <div className="create-category-details-yok">
         <div className="create-category-details-and-title-para-yok">
           <Typography variant="h6">Details</Typography>

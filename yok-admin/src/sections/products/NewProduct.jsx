@@ -11,11 +11,15 @@ import {
   FormControlLabel,
   InputLabel,
   MenuItem,
+  IconButton,
   Radio,
   RadioGroup,
   Select,
   TextField,
+  Stack,
 } from '@mui/material';
+
+import CloseIcon from '@mui/icons-material/Close';
 
 import {
   createProductAPI,
@@ -46,7 +50,7 @@ const variationsValue = ['Small', 'Medium', 'Large', 'Extra Large'];
 
 const colorsValue = ['Red', 'Green', 'Orange'];
 
-const NewProduct = () => {
+const NewProduct = ({ setActiveButton }) => {
   const navigate = useNavigate();
   const [tags, setTags] = React.useState([]);
   // const [color, setColor] = React.useState([]);
@@ -390,13 +394,23 @@ const NewProduct = () => {
       // if (response) {
       //   navigate('/products');
       // }
-      Swal.fire({
-        position: 'center',
-        icon: 'success',
-        title: 'Product has been created',
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      if (response?.message !== 'Product created successfully') {
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: 'Product has been created',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Product creation failed.',
+          showConfirmButton: true,
+          confirmButtonText: 'Try Again',
+        });
+      }
       setProductData({
         name: '',
         slug: '',
@@ -414,6 +428,7 @@ const NewProduct = () => {
         gender: [],
         type: 'Normal',
       });
+      setActiveButton('product');
     } catch (error) {
       console.error('Error creating product:', error);
     }
@@ -443,7 +458,13 @@ const NewProduct = () => {
 
   return (
     <div>
-      <Typography variant="h4">Create a new product</Typography>
+      <Stack flexDirection="row" alignItems="center" justifyContent="space-between">
+        <Typography variant="h4">Create a new product</Typography>
+        <IconButton onClick={() => setActiveButton('product')} title="Close">
+          <CloseIcon className="red" />
+        </IconButton>
+      </Stack>
+
       <div className="create-product-details-yok">
         <div className="create-product-details-and-title-para-yok">
           <Typography variant="h6">Details</Typography>

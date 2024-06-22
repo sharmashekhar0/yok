@@ -34,7 +34,7 @@ export default function VariationPage() {
       }
     };
     loadVariations();
-  }, []);
+  }, [activeButton]);
 
   const handleNewBannerButtonClick = () => {
     setActiveButton('newVariation');
@@ -139,7 +139,7 @@ export default function VariationPage() {
                 {filteredProducts && filteredProducts.length > 0 ? (
                   filteredProducts?.map((product, i) => (
                     <tr key={i}>
-                      <td>{i + 1}</td>
+                      <td>{(currentPage - 1) * itemsPerPage + i + 1}</td>
                       <td>{product.size}</td>
                       <td>
                         <IconButton onClick={() => handleDelete(product._id)} title="Delete">

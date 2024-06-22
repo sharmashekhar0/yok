@@ -197,7 +197,7 @@ export default function CustomProductRequestsPage() {
                 {filteredProducts && filteredProducts.length > 0 ? (
                   filteredProducts.map((product, i) => (
                     <tr key={product.id}>
-                      <td>{i + 1}</td>
+                      <td>{(currentPage - 1) * itemsPerPage + i + 1}</td>
                       <td>{product.productName}</td>
                       <td>{product.name}</td>
                       <td>
@@ -249,7 +249,10 @@ export default function CustomProductRequestsPage() {
         </div>
       )}
       {activeButton === 'ViewCustomProductRequest' && (
-        <ViewCustomProductRequest clickedProduct={clickedProduct} />
+        <ViewCustomProductRequest
+          clickedProduct={clickedProduct}
+          setActiveButton={setActiveButton}
+        />
       )}
     </Container>
   );

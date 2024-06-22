@@ -120,7 +120,7 @@ export default function CategoriesView() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [activeButton]);
 
   const loadData = async () => {
     const data = await getAllCategory();
@@ -213,7 +213,7 @@ export default function CategoriesView() {
                 {displayedCategories && displayedCategories.length > 0 ? (
                   displayedCategories.map((category, index) => (
                     <tr key={category._id}>
-                      <td>{index + 1}</td>
+                      <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                       <td>{category.name}</td>
                       <td>
                         <img
@@ -263,7 +263,9 @@ export default function CategoriesView() {
           </div>
         </div>
       )}
-      {activeButton === 'newCategory' && <NewCategory categoryDataToEdit={editCategoryData} />}
+      {activeButton === 'newCategory' && (
+        <NewCategory categoryDataToEdit={editCategoryData} setActiveButton={setActiveButton} />
+      )}
     </Container>
   );
 }

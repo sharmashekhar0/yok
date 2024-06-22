@@ -55,7 +55,6 @@ const HeaderTwo: React.FC = () => {
 						</span>
 					</button>
 					<Logo />
-
 					<div className="flex items-center justify-end w-full ltr:md:mr-5 rtl:md:ml-5 ltr:xl:mr-8 rtl:xl:ml-8 ltr:2xl:mr-10 rtl:2xl:ml-10">
 						<LanguageSwitcher />
 					</div>

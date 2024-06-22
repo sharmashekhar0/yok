@@ -247,7 +247,7 @@ export default function UserPage() {
               {filteredProducts && filteredProducts.length > 0 ? (
                 filteredProducts.map((product, i) => (
                   <tr key={product.id}>
-                    <td>{i + 1}</td>
+                    <td>{(currentPage - 1) * itemsPerPage + i + 1}</td>
                     <td>{product.name}</td>
                     <td>{product.email}</td>
                     {/* <td>{product.phone}</td>

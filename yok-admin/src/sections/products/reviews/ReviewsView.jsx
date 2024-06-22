@@ -1,13 +1,13 @@
 /* eslint-disable */
-import React, { useEffect, useState } from "react";
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import Iconify from "src/components/iconify";
+import React, { useEffect, useState } from 'react';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import Iconify from 'src/components/iconify';
 import {
   Box,
   IconButton,
@@ -16,11 +16,11 @@ import {
   InputLabel,
   MenuItem,
   Select,
-} from "@mui/material";
-import "./ReviewsView.css";
-import { getRating } from "src/api/api";
-import Pagination from "@mui/material/Pagination";
-import { getAllRating } from "src/api/api";
+} from '@mui/material';
+import './ReviewsView.css';
+import { getRating } from 'src/api/api';
+import Pagination from '@mui/material/Pagination';
+import { getAllRating } from 'src/api/api';
 
 export default function ReviewsView() {
   const [allReviews, setAllReviews] = useState([]);
@@ -37,14 +37,14 @@ export default function ReviewsView() {
     try {
       const response = await getRating();
       setReview(response?.data?.ratings);
-      console.log("response products", response);
+      console.log('response products', response);
     } catch (error) {
-      console.log("error", error);
+      console.log('error', error);
     }
   };
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortOption, setSortOption] = useState('');
 
   const handleView = (reviewId) => {
     console.log(`View review with ID: ${reviewId}`);
@@ -73,17 +73,15 @@ export default function ReviewsView() {
     ?.filter((review) => {
       const searchTermLower = searchTerm.toLowerCase();
       return Object.values(review).some(
-        (value) =>
-          typeof value === "string" &&
-          value.toLowerCase().includes(searchTermLower)
+        (value) => typeof value === 'string' && value.toLowerCase().includes(searchTermLower)
       );
     })
     .sort((a, b) => {
-      if (sortOption === "RatingHighToLow") {
+      if (sortOption === 'RatingHighToLow') {
         return a.rating > b.rating ? -1 : 1;
-      } else if (sortOption === "RatingLowToHigh") {
+      } else if (sortOption === 'RatingLowToHigh') {
         return a.rating < b.rating ? -1 : 1;
-      } else if (sortOption === "Published") {
+      } else if (sortOption === 'Published') {
         return a.published ? -1 : 1;
       }
       return 0;
@@ -97,12 +95,7 @@ export default function ReviewsView() {
   return (
     <Container>
       <div>
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          mb={5}
-        >
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4">Reviews</Typography>
         </Stack>
 
@@ -116,9 +109,9 @@ export default function ReviewsView() {
           {/* Search TextField */}
           <Box
             sx={{
-              width: "50%",
-              "& .MuiFormControl-root": {
-                width: "100%",
+              width: '50%',
+              '& .MuiFormControl-root': {
+                width: '100%',
               },
             }}
           >
@@ -134,19 +127,15 @@ export default function ReviewsView() {
           </Box>
 
           {/* Sort By Dropdown */}
-          <FormControl variant="outlined" sx={{ width: "50%", minWidth: 120 }}>
+          <FormControl variant="outlined" sx={{ width: '50%', minWidth: 120 }}>
             <InputLabel>Sort By</InputLabel>
             <Select value={sortOption} onChange={handleSort} label="Sort By">
               {/* Dummy Options */}
               <MenuItem value="" disabled>
                 <em>None</em>
               </MenuItem>
-              <MenuItem value="RatingHighToLow">
-                Rating (High &gt; Low)
-              </MenuItem>
-              <MenuItem value="RatingLowToHigh">
-                Rating (Low &gt; High)
-              </MenuItem>
+              <MenuItem value="RatingHighToLow">Rating (High &gt; Low)</MenuItem>
+              <MenuItem value="RatingLowToHigh">Rating (Low &gt; High)</MenuItem>
               <MenuItem value="Published">Published</MenuItem>
             </Select>
           </FormControl>
@@ -168,7 +157,7 @@ export default function ReviewsView() {
               {filteredReviews && filteredReviews.length > 0 ? (
                 filteredReviews.map((review, i) => (
                   <tr key={i}>
-                    <td>{i + 1}</td>
+                    <td>{(currentPage - 1) * itemsPerPage + i + 1}</td>
                     <td>{review.productName}</td>
                     <td>{review.rating}</td>
                     <td>{review.userEmail}</td>
@@ -196,7 +185,7 @@ export default function ReviewsView() {
         </div>
         {totalPages > 1 && (
           <div className="flex justify-center items-center mt-4">
-            <Stack alignItems={"end"}>
+            <Stack alignItems={'end'}>
               <Pagination
                 count={totalPages}
                 page={currentPage}

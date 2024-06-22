@@ -5,11 +5,12 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Swal from 'sweetalert2';
-import { Stack } from '@mui/material';
+import { IconButton, Stack } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { createBrand } from 'src/api/api';
+import CloseIcon from '@mui/icons-material/Close';
 
-const newBrand = () => {
+const newBrand = ({ setActiveButton }) => {
   const { register, handleSubmit, watch } = useForm();
 
   const [brandData, setBrandData] = useState({
@@ -35,13 +36,24 @@ const newBrand = () => {
       console.log('Form Data New Brand :: ', data);
       const response = await createBrand(data);
       console.log('Response new brand :: ', response);
-      // Swal.fire({
-      //   position: 'center',
-      //   icon: 'success',
-      //   title: 'Brand has been added',
-      //   showConfirmButton: false,
-      //   timer: 1500,
-      // });
+      if (response?.success) {
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: 'Brand has been added',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        setActiveButton('brand');
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Something went wrong.',
+          showConfirmButton: true,
+          confirmButtonText: 'Try Again',
+        });
+      }
     } catch (error) {
       console.log('Error while creating adding brand :: ', error);
     }
@@ -50,9 +62,12 @@ const newBrand = () => {
   return (
     <Container style={{ width: '70%' }}>
       <form onSubmit={handleSubmit(createNewBrandHandler)}>
-        <Typography variant="h4" gutterBottom>
-          Brand
-        </Typography>
+        <Stack flexDirection="row" alignItems="center" justifyContent="space-between">
+          <Typography variant="h4">Create a new product</Typography>
+          <IconButton onClick={() => setActiveButton('brand')} title="Close">
+            <CloseIcon className="red" />
+          </IconButton>
+        </Stack>
         <Stack
           className="input-section"
           sx={{

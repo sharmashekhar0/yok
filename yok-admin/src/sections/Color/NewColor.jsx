@@ -8,8 +8,9 @@ import Swal from 'sweetalert2';
 import { Stack, InputAdornment, IconButton } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { createColor } from 'src/api/api';
+import CloseIcon from '@mui/icons-material/Close';
 
-const NewColor = () => {
+const NewColor = ({ setActiveButton }) => {
   const { register, handleSubmit, watch, setValue } = useForm();
 
   const [colorData, setColorData] = useState({
@@ -41,13 +42,24 @@ const NewColor = () => {
       console.log('Form Data New Color :: ', data);
       const response = await createColor(data);
       console.log('Response new color :: ', response);
-      Swal.fire({
-        position: 'center',
-        icon: 'success',
-        title: 'Color has been added',
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      if (response?.data?.message === 'Color data saved successfully') {
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: 'Color has been added',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        setActiveButton('color');
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Something went wrong.',
+          showConfirmButton: true,
+          confirmButtonText: 'Try Again',
+        });
+      }
     } catch (error) {
       console.log('Error while creating adding color :: ', error);
     }
@@ -56,9 +68,12 @@ const NewColor = () => {
   return (
     <Container style={{ width: '70%' }}>
       <form onSubmit={handleSubmit(createNewColorHandler)}>
-        <Typography variant="h4" gutterBottom>
-          Variation
-        </Typography>
+        <Stack flexDirection="row" alignItems="center" justifyContent="space-between">
+          <Typography variant="h4">Create a new product</Typography>
+          <IconButton onClick={() => setActiveButton('color')} title="Close">
+            <CloseIcon className="red" />
+          </IconButton>
+        </Stack>
         <Stack
           className="input-section"
           sx={{

@@ -7,9 +7,10 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { createBannerAPI } from 'src/api/api';
 import Swal from 'sweetalert2';
-import { Stack } from '@mui/material';
+import { IconButton, Stack } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
-const NewBanner = () => {
+const NewBanner = ({ setActiveButton }) => {
   const [productData, setProductData] = useState({
     title: '',
     slug: '',
@@ -113,15 +114,26 @@ const NewBanner = () => {
         desktopImage: null,
         mobileImage: null,
       });
+      setActiveButton('banner');
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: 'Something went wrong.',
+        showConfirmButton: true,
+        confirmButtonText: 'Try Again',
+      });
     }
     console.log('banner created successfully:', response);
   };
   return (
     <Container style={{ width: '70%' }}>
-      <Typography variant="h4" gutterBottom>
-        Banner
-      </Typography>
-
+      <Stack flexDirection="row" alignItems="center" justifyContent="space-between">
+        <Typography variant="h4">Create a new product</Typography>
+        <IconButton onClick={() => setActiveButton('banner')} title="Close">
+          <CloseIcon className="red" />
+        </IconButton>
+      </Stack>
       <Stack
         className="input-section"
         sx={{

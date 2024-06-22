@@ -35,7 +35,7 @@ export default function TestimonialPage() {
       }
     };
     loadTestimonials();
-  }, []);
+  }, [activeButton]);
 
   const handleNewBannerButtonClick = () => {
     setActiveButton('newTestimonial');
@@ -144,7 +144,7 @@ export default function TestimonialPage() {
                 {filteredProducts && filteredProducts.length > 0 ? (
                   filteredProducts?.map((product, i) => (
                     <tr key={i}>
-                      <td>{i + 1}</td>
+                      <td>{(currentPage - 1) * itemsPerPage + i + 1}</td>
                       <td>
                         <img height={'48px'} width={'48px'} src={product.avatar} alt="No Avatar" />
                       </td>
