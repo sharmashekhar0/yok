@@ -1,7 +1,10 @@
 import ProductCard from "@components/custom-product/product-card";
 import Button from "@components/ui/button";
 import type { FC } from "react";
-import { useProductsQuery } from "@framework/product/get-all-products";
+import {
+	useCustomProductsQuery,
+	useProductsQuery,
+} from "@framework/product/get-all-products";
 import { useRouter } from "next/router";
 import ProductFeedLoader from "@components/ui/loaders/product-feed-loader";
 import { useTranslation } from "next-i18next";
@@ -19,7 +22,7 @@ export const ProductGrid: FC<ProductGridProps> = ({ className = "" }) => {
 		hasNextPage,
 		data,
 		error,
-	} = useProductsQuery({ ...query });
+	} = useCustomProductsQuery({ ...query });
 	if (error) return <p>{error.message}</p>;
 
 	const { t } = useTranslation("common");

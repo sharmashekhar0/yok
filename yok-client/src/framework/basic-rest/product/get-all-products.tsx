@@ -9,8 +9,28 @@ type PaginatedProduct = {
 	paginatorInfo: any;
 };
 
-const fetchProducts = async () => {
+const fetchCustomProducts = async () => {
 	const { data } = await http.get(API_ENDPOINTS.CUSTOMPRODUCTS);
+	return {
+		data: shuffle(data),
+		paginatorInfo: {
+			nextPageUrl: "",
+		},
+	};
+};
+
+const useCustomProductsQuery = (options: QueryOptionsType) => {
+	const result = useInfiniteQuery<PaginatedProduct, Error>({
+		queryKey: [API_ENDPOINTS.CUSTOMPRODUCTS, {}] || [],
+		queryFn: fetchCustomProducts,
+		initialPageParam: 0,
+		getNextPageParam: ({ paginatorInfo }) => paginatorInfo?.nextPageUrl,
+	});
+	return result;
+};
+
+const fetchProducts = async () => {
+	const { data } = await http.get(API_ENDPOINTS.PRODUCTS);
 	return {
 		data: shuffle(data),
 		paginatorInfo: {
@@ -21,7 +41,7 @@ const fetchProducts = async () => {
 
 const useProductsQuery = (options: QueryOptionsType) => {
 	const result = useInfiniteQuery<PaginatedProduct, Error>({
-		queryKey: [API_ENDPOINTS.CUSTOMPRODUCTS, {}] || [],
+		queryKey: [API_ENDPOINTS.PRODUCTS, {}] || [],
 		queryFn: fetchProducts,
 		initialPageParam: 0,
 		getNextPageParam: ({ paginatorInfo }) => paginatorInfo?.nextPageUrl,
@@ -29,4 +49,9 @@ const useProductsQuery = (options: QueryOptionsType) => {
 	return result;
 };
 
-export { useProductsQuery, fetchProducts };
+export {
+	fetchCustomProducts,
+	useCustomProductsQuery,
+	useProductsQuery,
+	fetchProducts,
+};
