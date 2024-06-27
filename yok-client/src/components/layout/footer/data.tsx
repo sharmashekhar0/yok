@@ -6,12 +6,13 @@ export const footer = {
 			id: 1,
 			widgetTitle: "widget-title-social",
 			lists: [
-				// {
-				// 	id: 1,
-				// 	title: "link-instagram",
-				// 	path: "https://www.instagram.com/yok.co.in?utm_source=qr&igsh=MWpjejhwNW1lbXYwcw==",
-				// 	icon: <IoLogoInstagram />,
-				// },
+				{
+					id: 1,
+					title: "link-instagram",
+					path: "https://www.instagram.com/yok.co.in?utm_source=qr&igsh=MWpjejhwNW1lbXYwcw==",
+					icon: <IoLogoInstagram />,
+					
+				},
 				// {
 				// 	id: 2,
 				// 	title: "link-twitter",

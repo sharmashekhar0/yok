@@ -56,10 +56,10 @@ export default function Home({
 					className="mb-12 md:mb-14 xl:mb-16"
 				/>
 				<NewArrivalsProductFeedWithTabs />
-				<BrandTimerBlock
+				{/* <BrandTimerBlock
 					sectionHeading="text-top-brands-deal"
 					className="mb-12 md:mb-14 xl:mb-16"
-				/>
+				/> */}
 				<ProductsFeatured
 					limit={3}
 					variant="modern"
